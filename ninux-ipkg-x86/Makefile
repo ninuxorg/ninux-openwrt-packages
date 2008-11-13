@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ninux-x86
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+webif +webif-lang-it +olsrd +ip +libpthread +horst +snmpd +tcpdump +wireless-tools +olsrd-mod-bmf +olsrd-mod-dot-draw +olsrd-mod-dyn-gw +olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-secure +olsrd-mod-txtinfo +kmod-madwifi +openvpn +kmod-ipt-extra +kmod-ipt-conntrack +kmod-ipt-nathelper +kmod-ipt-nathelper-extra @TARGET_x86
+  DEPENDS:=+ahcpd +olsrd +olsrd-mod-dot-draw +olsrd-mod-dyn-gw +olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-txtinfo +ip +libpthread +wl +horst +snmpd +tcpdump +kmod-ipv6 +avahi-daemon +avahi-dnsconfd +iputils-ping6 +iputils-traceroute6 +wireless-tools +olsrd-mod-bmf +olsrd-mod-secure +kmod-madwifi +openvpn +kmod-ipt-extra +kmod-ipt-conntrack +kmod-ipt-nathelper +kmod-ipt-nathelper-extra @TARGET_x86
   TITLE:=Ninux.org Community Config Package
 endef
 
