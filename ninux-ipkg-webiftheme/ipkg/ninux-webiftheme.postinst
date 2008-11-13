@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Post-install script for ninux.org webif theme
+#
+# some code adapted from webif/ipkg/webif.postinst
+# 
+
+# edit the configuration file /etc/config/webif to make nux theme the default
+sed 's/option id \"xwrt\"/option id \"nux\"/' "${IPKG_INSTROOT}/etc/config/webif" > "${IPKG_INSTROOT}/tmp/nintmpwebif" && mv -f "${IPKG_INSTROOT}/tmp/nintmpwebif" "${IPKG_INSTROOT}/etc/config/webif" >&- 2>&-
+
+# create symlink to /www/themes/nux
+rm -rf "${IPKG_INSTROOT}/www/themes/active" >&- 2>&-
+ln -sf "/www/themes/nux" "${IPKG_INSTROOT}/www/themes/active" >&- 2>&-
+
