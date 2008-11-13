@@ -1,0 +1,6 @@
+config NINUX_DYNAMICDNS
+	prompt "Questo pacchetto prepara il router per funzionare con il servizio di DNS dinamico di ninux.org"
+	tristate
+	default m if CONFIG_DEVEL
+	help
+		Per la documentazione visita http://wiki.ninux.org/DnsDinamico

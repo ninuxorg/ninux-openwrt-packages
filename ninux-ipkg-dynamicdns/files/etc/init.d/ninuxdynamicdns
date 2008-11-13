@@ -1,0 +1,27 @@
+#!/bin/sh
+# netcat is required to run this script
+START=80
+
+. /etc/config/ninuxdynamicdns
+
+connect() {
+        echo -e "$USERNAME\n$PASSWORD\n$HOSTNAME" | nc $ADDRESS $PORT > /tmp/dnsninuxclient
+}
+
+start() {
+	if connect; then
+        	cat /tmp/dnsninuxclient
+	        if grep "KO" /tmp/dnsninuxclient > /dev/null; then
+	                echo "Error!"
+	                /bin/false
+	        fi
+	else
+	        echo "Connection error?"
+	        /bin/false
+	fi
+}
+
+stop() {
+	/bin/true
+}
+
