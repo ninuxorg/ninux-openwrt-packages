@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Post-install script for ninux.org atheros config package
+#
+
+#warning if uci is broken in the trunk this will not work
+#uci set olsr.if1.Interface=ninuxif
+#uci set olsr.nameservice.name=my-hostname
+
+
+#OLSR DUAL STACK
+
+cp "${IPKG_INSTROOT}/etc/init.d/olsrd" "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6"
+
+sed 's/USE_CONF_F=/USE_CONF_F=\/etc\/olsrd.conf/' "${IPKG_INSTROOT}/etc/init.d/olsrd" > "${IPKG_INSTROOT}/tmp/olsrd" && mv -f "${IPKG_INSTROOT}/tmp/olsrd" "${IPKG_INSTROOT}/etc/init.d/olsrd" >&- 2>&-
+
+sed 's/USE_CONF_F=/USE_CONF_F=\/etc\/olsrd-ipv6.conf/' "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" > "${IPKG_INSTROOT}/tmp/olsrd-ipv6" && mv -f "${IPKG_INSTROOT}/tmp/olsrd-ipv6" "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" >&- 2>&-
+
+chmod +x  "${IPKG_INSTROOT}/etc/init.d/olsrd" >&- 2>&-
+chmod +x "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" >&- 2>&-
+
+#SBRACA IL FIREWALL
+
+sed 's/DROP/ACCEPT/' "${IPKG_INSTROOT}/etc/config/firewall" > "${IPKG_INSTROOT}/tmp/firewall" && mv -f "${IPKG_INSTROOT}/tmp/firewall" "${IPKG_INSTROOT}/etc/config/firewall" >&- 2>&-
+
+
+sed 's/use-ipv6=no/use-ipv6=yes/' "${IPKG_INSTROOT}/etc/avahi/avahi-daemon.conf" > "${IPKG_INSTROOT}/tmp/avahi-daemon.conf" && mv -f "${IPKG_INSTROOT}/tmp/avahi-daemon.conf" "${IPKG_INSTROOT}/etc/avahi/avahi-daemon.conf" >&- 2>&-
+
+sed 's/enable-reflector=no/enable-reflector=yes/' "${IPKG_INSTROOT}/etc/avahi/avahi-daemon.conf" > "${IPKG_INSTROOT}/tmp/avahi-daemon.conf" && mv -f "${IPKG_INSTROOT}/tmp/avahi-daemon.conf" "${IPKG_INSTROOT}/etc/avahi/avahi-daemon.conf" >&- 2>&-
+
+
+sed 's/wl0/ath0/' "${IPKG_INSTROOT}/etc/config/ahcpd" > "${IPKG_INSTROOT}/tmp/ahcpd" && mv -f "${IPKG_INSTROOT}/tmp/ahcpd" "${IPKG_INSTROOT}/etc/config/ahcpd" >&- 2>&-
