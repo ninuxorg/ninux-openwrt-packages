@@ -27,7 +27,7 @@ define Package/luasec
   CATEGORY:=Languages
   TITLE:=LUASec 
   URL:=http://luasec.luaforge.net/
-  DEPENDS:=lua +openssl +luasocket
+  DEPENDS:=lua +libopenssl +luasocket
 endef
 
 define Package/luasec/description
