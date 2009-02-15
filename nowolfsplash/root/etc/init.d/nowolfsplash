@@ -1,13 +1,14 @@
 #!/bin/sh /etc/rc.common
 GATEWAY_IP=192.168.0.201
-
+PORT=8082
 
 start() {
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to $GATEWAY_IP
-
-
-
-
+	start-stop-daemon -S -b -q -x /usr/bin/luci-splashd $PORT $GATEWAY_IP 
+	iptables -t nat -A PREROUTING -d $GATEWAY_IP -j ACCEPT
+	iptables -t nat -A PREROUTING -p tcp -d ! $GATEWAY_IP --dport 80 -j DNAT --to-destination $GATEWAY_IP:$PORT 
 }
 
-stop() {}
+stop() {
+	echo "stop"
+	iptables -t nat -F
+}
