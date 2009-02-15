@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+GATEWAY_IP=192.168.0.201
+
+
+start() {
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to $GATEWAY_IP
+
+
+
+
+}
+
+stop() {}
