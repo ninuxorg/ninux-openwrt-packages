@@ -1,2 +1,0 @@
-include config.mk
-include module.mk
