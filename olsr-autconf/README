@@ -1,0 +1,1 @@
+ifconfig | awk '{if (index($1,"ath")) print $1 " -  " $5}'
