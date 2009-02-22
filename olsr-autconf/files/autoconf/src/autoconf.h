@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2005, Bruno Randolf <bruno.randolf@4g-systems.biz>
+ * Copyright (c) 2009, OrazioPirataDelloSpazio - Ninux.org (ziducaixao-at-autistici.org)
  * Copyright (c) 2004, Andreas Tonnesen(andreto-at-olsr.org)
  * All rights reserved.
  *
@@ -52,7 +52,7 @@
 #include "mantissa.h"
 
 #define PLUGIN_NAME	"OLSRD autoconf plugin"
-#define PLUGIN_VERSION	"0.3"
+#define PLUGIN_VERSION	"0.1"
 #define PLUGIN_AUTHOR   "OrazioPirataDelloSpazio - Ninux.org"
 
 // useful to set for the freifunkfirmware to remove all
@@ -76,50 +76,14 @@
 #define MID_MAXLEN 16
 #define MID_PREFIX "mid%i."
 
-/**
- * a linked list of autoconf_entry
- * if type is NAME_HOST, name is a hostname and ip its IP addr
- * if type is NAME_FORWARDER, then ip is a dns-server (and name is irrelevant)
- * if type is NAME_SERVICE, then name is a service-line (and the ip is irrelevant)
- * if type is NAME_LATLON, then name has 2 floats with lat and lon (and the ip is irrelevant)
- */
-struct mad_entry {
-  union olsr_ip_addr ip;
-  olsr_u16_t type;
-  olsr_u16_t len;
-  char *name;
-  struct autoconf_entry *next;             /* linked list */
-};
-
-/* *
- * linked list of db_entries for each originator with
- * originator being its main_addr
- *
- * names points to the autoconf_entry with its hostname, dns-server or
- * service-line entry
- *
- * all the db_entries are hashed in nameservice.c to avoid a too long list
- * for many nodes in a net
- *
- * */
-struct db_entry {
-  union olsr_ip_addr originator;       /* IP address of the node this entry describes */
-  struct timer_entry *db_timer;        /* Validity time */
-  struct autoconf_entry *names;            /* list of names this originator declares */
-  struct list_node db_list;            /* linked list of db entries per hash container */
-};
-
-/* inline to recast from db_list back to db_entry */
-LISTNODE2STRUCT(list2db, struct db_entry, db_list);
-
 #define OLSR_NAMESVC_DB_JITTER 5        /* percent */
 
 extern struct autoconf_entry *my_names;
 extern struct list_node latlon_list[HASHSIZE];
-extern float my_lat, my_lon;
 
-void olsr_expire_write_file_timer(void *);
-void olsr_namesvc_delete_db_entry(struct db_entry *);
+
+
+
 
 /* Parser function to register with the sceduler */
 olsr_bool olsr_parser(union olsr_message *, struct interface *, union olsr_ip_addr *);
@@ -127,31 +91,16 @@ olsr_bool olsr_parser(union olsr_message *, struct interface *, union olsr_ip_ad
 /* callback for periodic timer */
 void olsr_namesvc_gen(void *);
 
-int encap_namemsg(struct namemsg *);
-
-struct autoconf_entry *add_autoconf_to_list(struct autoconf_entry *my_list, const char *value, int type, const union olsr_ip_addr *ip);
-
-struct autoconf_entry *remove_nonvalid_names_from_list(struct autoconf_entry *my_list, int type);
-
-void free_all_list_entries(struct list_node *);
+int encap_madmsg(struct namemsg *);
 
 void decap_namemsg(struct name *from_packet, struct autoconf_entry **to, olsr_bool * this_table_changed);
 
-void insert_new_autoconf_in_list(union olsr_ip_addr *, struct list_node *, struct name *, olsr_bool *, olsr_reltime);
 
-olsr_bool allowed_hostautoconf_or_ip_in_service(const char *service_line, const regmatch_t * hostautoconf_or_ip);
+void update_autoconf_entry(union olsr_ip_addr *, struct madmsg *, int, olsr_reltime);
 
-void update_autoconf_entry(union olsr_ip_addr *, struct namemsg *, int, olsr_reltime);
 
-void write_hosts_file(void);
-
-void write_services_file(void);
-
-void write_resolv_file(void);
 
 int register_olsr_param(char *key, char *value);
-
-void free_autoconf_entry_list(struct autoconf_entry **list);
 
 olsr_bool allowed_ip(const union olsr_ip_addr *addr);
 
@@ -163,17 +112,11 @@ olsr_bool is_service_wellformed(const char *service_line);
 
 olsr_bool is_service_wellformed(const char *service_line);
 
-olsr_bool is_latlon_wellformed(const char *latlon_line);
 
 olsr_bool get_isdefhna_latlon(void);
 
 void lookup_defhna_latlon(union olsr_ip_addr *ip);
 
-const char *lookup_autoconf_latlon(union olsr_ip_addr *ip);
-
-void write_latlon_file(void);
-
-char *create_packet(struct name *to, struct autoconf_entry *from);
 
 void autoconf_constructor(void);
 
@@ -182,10 +125,3 @@ void autoconf_destructor(void);
 int autoconf_init(void);
 
 #endif
-
-/*
- * Local Variables:
- * c-basic-offset: 2
- * indent-tabs-mode: nil
- * End:
- */

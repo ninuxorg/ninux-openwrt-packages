@@ -1,5 +1,6 @@
 
 /*
+ * Copyright (c) 2009, OrazioPirataDelloSpazio - Ninux.org (ziducaixao-at-autistici.org)
  * Copyright (c) 2004, Andreas Tonnesen(andreto-at-olsr.org)
  * All rights reserved.
  *
