@@ -78,44 +78,20 @@
 
 #define OLSR_NAMESVC_DB_JITTER 5        /* percent */
 
-extern struct autoconf_entry *my_names;
-extern struct list_node latlon_list[HASHSIZE];
-
-
-
-
 
 /* Parser function to register with the sceduler */
 olsr_bool olsr_parser(union olsr_message *, struct interface *, union olsr_ip_addr *);
 
 /* callback for periodic timer */
-void olsr_namesvc_gen(void *);
+void olsr_autoconfsvc_gen(void *);
 
 int encap_madmsg(struct namemsg *);
-
-void decap_namemsg(struct name *from_packet, struct autoconf_entry **to, olsr_bool * this_table_changed);
 
 
 void update_autoconf_entry(union olsr_ip_addr *, struct madmsg *, int, olsr_reltime);
 
 
-
 int register_olsr_param(char *key, char *value);
-
-olsr_bool allowed_ip(const union olsr_ip_addr *addr);
-
-olsr_bool allowed_service(const char *service_line);
-
-olsr_bool is_autoconf_wellformed(const char *service_line);
-
-olsr_bool is_service_wellformed(const char *service_line);
-
-olsr_bool is_service_wellformed(const char *service_line);
-
-
-olsr_bool get_isdefhna_latlon(void);
-
-void lookup_defhna_latlon(union olsr_ip_addr *ip);
 
 
 void autoconf_constructor(void);
