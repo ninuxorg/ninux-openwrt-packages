@@ -60,13 +60,14 @@
 
 #include "plugin_util.h"
 #include "autoconf.h"
-#include "compat.h"
 
 /* config parameters */
 static char my_hosts_file[MAX_FILE + 1];
 static char my_sighup_pid_file[MAX_FILE + 1];
 
 static char my_unique_address[16];
+static int my_interval;
+static double my_timeout = MAD_VALID_TIME;
 
 static enum mode {
 	VOID,
@@ -85,7 +86,7 @@ struct timer_entry *msg_gen_timer = NULL;
  * do initialization
  */
 void
-name_constructor(void)
+autoconf_constructor(void)
 {
 
 
@@ -94,17 +95,17 @@ name_constructor(void)
 static int
 set_autoconf_mode(const char *value, void *data, set_plugin_parameter_addon addon)
 {
-  struct name_entry **v = data;
+  struct mad_entry **v = data;
   my_mode = VOID;
   if (0 < strlen(value)) {
 	if (!strcmp(value, "auto"))
-		*(mode*)data = AUTO;
+		*(enum mode*)data = AUTO;
 	else if (!strcmp(value, "manual"))
-		*(mode*)data = MANUAL;
+		*(enum mode*)data = MANUAL;
 	else if (!strcmp(value, "random"))
-		*(mode*)data = RANDOM;
+		*(enum mode*)data = RANDOM;
   }
-  if (*(mode*)data != VOID) {
+  if (*(enum mode*)data != VOID) {
   	OLSR_PRINTF(1, "Autoconf plugin runs in mode %s \n",  value);
     return 0;
   } else {
@@ -119,6 +120,7 @@ set_autoconf_mode(const char *value, void *data, set_plugin_parameter_addon addo
 
 static const struct olsrd_plugin_parameters plugin_parameters[] = {
   {.name = "interval",.set_plugin_parameter = &set_plugin_int,.data = &my_interval},
+  {.name = "timeout",.set_plugin_parameter = &set_plugin_int,.data = &my_timeout},
   {.name = "unique_addr",.set_plugin_parameter = &set_plugin_string,.data = &my_unique_address,.addon = {sizeof(my_unique_address)} },
   {.name = "mode",.set_plugin_parameter = &set_autoconf_mode,.data = &my_mode },
    
@@ -147,9 +149,9 @@ olsrd_get_plugin_parameters(const struct olsrd_plugin_parameters **params, int *
  *   - register_olsr_data() then then finally calls this function
  */
 int
-name_init(void)
+autoconf_init(void)
 {
-  struct name_entry *name;
+  struct mad_entry *name;
   union olsr_ip_addr ipz;
   int ret;
 
@@ -167,7 +169,7 @@ name_init(void)
  *
  */
 void
-name_destructor(void)
+autoconf_destructor(void)
 {
   OLSR_PRINTF(2, "AUTOCONF PLUGIN: exit. cleaning up...\n");
 
@@ -198,7 +200,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     message->v4.seqno = htons(get_msg_seqno());
 
     msgsize = encap_madmsg((struct namemsg *)&message->v4.message);
-    msgsize = namesize + sizeof(struct olsrmsg);
+    msgsize = msgsize + sizeof(struct olsrmsg);
 
     message->v4.olsr_msgsize = htons(msgsize);
   } else {
@@ -211,7 +213,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     message->v6.seqno = htons(get_msg_seqno());
 
     msgsize = encap_madmsg((struct namemsg *)&message->v6.message);
-    msgsize = namesize + sizeof(struct olsrmsg6);
+    msgsize = msgsize + sizeof(struct olsrmsg6);
 
     message->v6.olsr_msgsize = htons(msgsize);
   }
@@ -222,7 +224,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     if (net_outbuffer_push(ifn, message, msgsize) != msgsize) {
       /* send data and try again */
       net_output(ifn);
-      if (net_outbuffer_push(ifn, message, namesize) != msgsize) {
+      if (net_outbuffer_push(ifn, message, msgsize) != msgsize) {
         OLSR_PRINTF(1, "AUTOCONF PLUGIN: could not send on interface: %s\n", ifn->int_name);
       }
     }
@@ -235,7 +237,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
 olsr_bool
 olsr_parser(union olsr_message *m, struct interface *in_if __attribute__ ((unused)), union olsr_ip_addr *ipaddr)
 {
-  struct namemsg *madmessage;
+  struct madmsg *madmessage;
   union olsr_ip_addr originator;
   olsr_reltime vtime;
   int size;
@@ -286,10 +288,10 @@ encap_madmsg(struct madmsg *msg)
   
    for (ifn = ifnet; ifn; ifn = ifn->int_next) {
   	// add IP and mask of interfaces
-  	memcpy(pos,ifn->int_addr.in_addr.s_addr,sizeof(olsr_32_t));
-  	memcpy(pos + sizeof(olsr_32_t) ,ifn->int_netmask.in_addr.s_addr,sizeof(olsr_32_t));
+  	memcpy(pos,ifn->int_addr.sin_addr.s_addr,sizeof(olsr_32_t));
+  	memcpy(pos + sizeof(olsr_32_t) ,ifn->int_netmask.sin_addr.s_addr,sizeof(olsr_32_t));
    	i++;
-   	pos += sizeof(struct madmsg)
+   	pos += sizeof(struct madmsg);
    }
   
 
@@ -299,14 +301,14 @@ encap_madmsg(struct madmsg *msg)
      // if (hna->net.prefix_len == 0) {
      //   continue;
      // }
-     memcpy(pos,hna->net.prefix.v4,sizeof(olsr_32_t)); 
+     memcpy(pos,&hna->net.prefix.v4,sizeof(olsr_32_t)); 
      olsr_prefix_to_netmask(&netmask, hna->net.prefix_len);
-     memcpy(pos + sizeof(olsr_32_t), netmask.v4, sizeof(olsr_32_t));
+     memcpy(pos + sizeof(olsr_32_t), &netmask.v4, sizeof(olsr_32_t));
      i++;
-  	 pos += sizeof(struct madmsg)
+  	 pos += sizeof(struct madmsg);
     }
 
-  msg->nr_ips = htons(i);
+  msg->nr_ip = htons(i);
   msg->version = htons(AUTOCONF_PROTOCOL_VERSION);
   
   return pos - (char *)msg;    
@@ -318,7 +320,9 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
 {
   struct ipaddr_str strbuf;
   char *pos, *end_pos;
+  struct interface *ifn;
   struct mad_entry *from_packet;
+  struct ip_prefix_list *hna;
   int i;
 
   OLSR_PRINTF(3, "AUTOCONF PLUGIN: Received Message from %s\n", olsr_ip_to_string(&strbuf, originator));
@@ -339,11 +343,11 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
 	// CHECK IF SOME IPs collides
 		
 	for (ifn = ifnet; ifn; ifn = ifn->int_next) {
-    	olsr_u32_t max_netmask = (from_packet->mask >= ifn->int_netmask.in_addr.s_addr ) ?
+    	olsr_u32_t max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
   	                             from_packet->mask :
-  	                             ifn->int_netmask.in_addr.s_addr;
+  	                             ifn->int_netmask.sin_addr.s_addr;
   	  
-    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.in_addr.s_addr) {
+    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.sin_addr.s_addr) {
     	
   		// There is a fuckin' collision man!
   		OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the interface IP %s\n", i,
@@ -356,12 +360,12 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
      for (hna = olsr_cnf->hna_entries; hna != NULL; hna = hna->next) {
        union olsr_ip_addr netmask;
        olsr_prefix_to_netmask(&netmask, hna->net.prefix_len);
-       olsr_u32_t max_netmask = (from_packet->mask >= netmask.v4 ) ?
+       olsr_u32_t max_netmask = (from_packet->mask >= (olsr_u32_t)netmask.v4.s_addr ) ?
   	                            from_packet->mask :
-  	                            netmask.v4;
+  	                            (olsr_u32_t)netmask.v4.s_addr;
 
       
-    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.in_addr.s_addr) {
+    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.sin_addr.s_addr) {
   		  // There is a fuckin' collision man!
   		  OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the announced IP %s\n", i,
                 olsr_ip_to_string(&strbuf, from_packet->ip));

@@ -46,9 +46,8 @@
 #include "common/list.h"
 
 #include "olsrd_plugin.h"
-#include "nameservice_msg.h"
+#include "autoconf_msg.h"
 #include "hashing.h"
-#include "mapwrite.h"
 #include "mantissa.h"
 
 #define PLUGIN_NAME	"OLSRD autoconf plugin"
@@ -63,10 +62,9 @@
 #define PARSER_TYPE		MESSAGE_TYPE
 #define EMISSION_INTERVAL	120     /* seconds */
 #define EMISSION_JITTER         25      /* percent */
-#define NAME_VALID_TIME		1800    /* seconds */
-#define NAMESERVER_COUNT        3
+#define MAD_VALID_TIME		1800    /* seconds */
 
-#define NAME_PROTOCOL_VERSION	1
+#define AUTOCONF_PROTOCOL_VERSION	1
 
 #define MAX_NAME 127
 #define MAX_FILE 255
@@ -83,9 +81,9 @@
 olsr_bool olsr_parser(union olsr_message *, struct interface *, union olsr_ip_addr *);
 
 /* callback for periodic timer */
-void olsr_autoconfsvc_gen(void *);
+void olsr_autoconf_gen(void *);
 
-int encap_madmsg(struct namemsg *);
+int encap_madmsg(struct madmsg *);
 
 
 void update_autoconf_entry(union olsr_ip_addr *, struct madmsg *, int, olsr_reltime);

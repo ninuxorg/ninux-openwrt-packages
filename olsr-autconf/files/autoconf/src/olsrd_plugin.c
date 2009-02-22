@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2009, OrazioPirataDelloSpazio - Ninux.org (ziducaixao-at-autistici.org)
  * Copyright (c) 2004, Andreas Tonnesen(andreto-at-olsr.org)
@@ -38,7 +37,7 @@
 #include <string.h>
 
 #include "olsrd_plugin.h"
-#include "nameservice.h"
+#include "autoconf.h"
 
 #define PLUGIN_NAME    "OLSRD autoconf plugin"
 #define PLUGIN_VERSION "0.1"
