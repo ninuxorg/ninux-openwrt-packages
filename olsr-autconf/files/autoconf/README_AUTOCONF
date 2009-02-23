@@ -1,28 +1,4 @@
----------------------------------------------------------------------
-NAMESERVICE PLUGIN FOR OLSRD
-by Bruno Randolf <bruno.randolf@4g-systems.biz>
----------------------------------------------------------------------
-
-a simple DNS replacement for OLSR networks
-
-this plugin distributes host name (DNS) information over OLSR. every 
-node which runs the olsr daemon can announce it's own name, names for
-other IP adresses it is associated with (HNAs) and if it is running
-a "real" nameserver which can resolve other (internet) names (upstream 
-dns server).
-
-the nodes in the network collect this information and write the host 
-names to a file (possibly /etc/hosts), and the 3 nearest upstream 
-nameservers to another file (possibly /etc/resolv.conf).
-
-these files can be used to resolve hostnames on the local system and/or
-be read by a DNS server like "dnsmasq", to make the names available 
-via the ordinary DNS protocol to other clients as well.
-
-the default location of the hosts file is
-"/var/run/hosts_olsr" on unixes
-"C:\WINDOWS\hosts_olsr" on windows
-
+MAD Idea taken by http://tools.ietf.org/html/draft-laouiti-manet-olsr-address-autoconf-01
 
 ---------------------------------------------------------------------
 PLUGIN PARAMETERS (PlParam)
@@ -124,57 +100,11 @@ SAMPLE CONFIG
 
 add in /etc/olsrd.conf:
 
-LoadPlugin "olsrd_nameservice.so.0.2"
+LoadPlugin "olsrd_autoconf.so.0.1"
 {
-	PlParam "name" "thisismyname"
-	PlParam "hosts-file" "/etc/hosts"
-	PlParam "resolv-file" "/etc/resolv.conf"
+	PlParam "interval" "3.4"
+	PlParam "unique_addr" ""
+	PlParam "mode" "auto"
 }
 
 
----------------------------------------------------------------------
-USING THE NAME INFORMATION
----------------------------------------------------------------------
-
-to use the name information distributed by the plugin actually for
-name resolution you can do one of the following.
-
-UNIX VARIANTS:
-
-* overwrite /etc/hosts
-	be sure you have nothing in /etc/hosts which you still need and
-	configure the plugin with PlParam "host-file" "/etc/hosts"
-
-* link /etc/hosts
-	ln -s /var/run/hosts_olsr /etc/hosts
-
-* use dnsmasq
-	if you want to make the names available via ordinary DNS
-	you can use dnsmasq to read the hosts file and serve it to
-	users. add "addn-hosts=/var/run/hosts_olsr" to dnsmasq.conf 
-        and:
-               PlParam "sighup-pid-file" "/var/run/dnsmasq.pid"
-
-        to your nameservice plugin configuration.
-
-        This is especially usefull for infrastructure mesh networks that
-        can't afford to run olsrd on all the clients but wish to provide
-        DNS to them. This is solved by running dnsmasq and olsrd with
-        this setup on "edge" nodes that provide connectivity.
-
-WINDOWS:
-
-* overwrite C:\WINDOWS\system32\drivers\etc\hosts
-	be sure you have nothing in the file which you still need 
-	and configure the plugin with
-        PlParam "hosts-file" "C:\WINDOWS\system32\drivers\etc\hosts"
-
----------------------------------------------------------------------
-TODO
----------------------------------------------------------------------
-  
-  * implement a small DNS server into the plugin?
-  * or make dynamic DNS updates for bind?
-
----------------------------------------------------------------------
-EOF / 30.06.2007

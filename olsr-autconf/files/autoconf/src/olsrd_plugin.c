@@ -43,7 +43,7 @@
 #define PLUGIN_VERSION "0.1"
 #define PLUGIN_AUTHOR   "OrazioPirataDelloSpazio - Ninux.org"
 #define MOD_DESC PLUGIN_NAME " " PLUGIN_VERSION
-#define PLUGIN_INTERFACE_VERSION 1
+#define PLUGIN_INTERFACE_VERSION 5
 
 static void __attribute__ ((constructor)) my_init(void);
 

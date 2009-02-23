@@ -199,7 +199,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     message->v4.hopcnt = 0;
     message->v4.seqno = htons(get_msg_seqno());
 
-    msgsize = encap_madmsg((struct namemsg *)&message->v4.message);
+    msgsize = encap_madmsg((struct madmsg *)&message->v4.message);
     msgsize = msgsize + sizeof(struct olsrmsg);
 
     message->v4.olsr_msgsize = htons(msgsize);
@@ -288,10 +288,10 @@ encap_madmsg(struct madmsg *msg)
   
    for (ifn = ifnet; ifn; ifn = ifn->int_next) {
   	// add IP and mask of interfaces
-  	memcpy(pos,ifn->int_addr.sin_addr.s_addr,sizeof(olsr_32_t));
-  	memcpy(pos + sizeof(olsr_32_t) ,ifn->int_netmask.sin_addr.s_addr,sizeof(olsr_32_t));
+  	memcpy(pos,&ifn->int_addr.sin_addr.s_addr, sizeof(olsr_32_t));
+  	memcpy(pos + sizeof(olsr_32_t) ,&ifn->int_netmask.sin_addr.s_addr,sizeof(olsr_32_t));
    	i++;
-   	pos += sizeof(struct madmsg);
+   	pos += sizeof(struct mad_entry);
    }
   
 
@@ -305,7 +305,7 @@ encap_madmsg(struct madmsg *msg)
      olsr_prefix_to_netmask(&netmask, hna->net.prefix_len);
      memcpy(pos + sizeof(olsr_32_t), &netmask.v4, sizeof(olsr_32_t));
      i++;
-  	 pos += sizeof(struct madmsg);
+  	 pos += sizeof(struct mad_entry);
     }
 
   msg->nr_ip = htons(i);

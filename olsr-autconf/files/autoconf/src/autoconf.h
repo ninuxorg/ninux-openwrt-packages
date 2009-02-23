@@ -60,7 +60,7 @@
 
 #define MESSAGE_TYPE		131
 #define PARSER_TYPE		MESSAGE_TYPE
-#define EMISSION_INTERVAL	120     /* seconds */
+#define EMISSION_INTERVAL	10     /* seconds */
 #define EMISSION_JITTER         25      /* percent */
 #define MAD_VALID_TIME		1800    /* seconds */
 
