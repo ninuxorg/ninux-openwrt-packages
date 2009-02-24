@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2009, OrazioPirataDelloSpazio - Ninux.org (ziducaixao-at-autistici.org)
  * Copyright (c) 2004, Andreas Tonnesen(andreto-at-olsr.org)
@@ -200,7 +199,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     message->v4.seqno = htons(get_msg_seqno());
 
     msgsize = encap_madmsg((struct madmsg *)&message->v4.message);
-    msgsize = msgsize + sizeof(struct olsrmsg);
+    msgsize = msgsize + 12;// with olsrmsg doesn't work  sizeof(struct olsrmsg);
 
     message->v4.olsr_msgsize = htons(msgsize);
   } else {
@@ -213,7 +212,7 @@ olsr_autoconf_gen(void *foo __attribute__ ((unused)))
     message->v6.seqno = htons(get_msg_seqno());
 
     msgsize = encap_madmsg((struct namemsg *)&message->v6.message);
-    msgsize = msgsize + sizeof(struct olsrmsg6);
+    //msgsize = msgsize + sizeof(struct olsrmsg6);
 
     message->v6.olsr_msgsize = htons(msgsize);
   }
@@ -305,7 +304,7 @@ encap_madmsg(struct madmsg *msg)
      olsr_prefix_to_netmask(&netmask, hna->net.prefix_len);
      memcpy(pos + sizeof(olsr_32_t), &netmask.v4, sizeof(olsr_32_t));
      i++;
-  	 pos += sizeof(struct mad_entry);
+     pos += sizeof(struct mad_entry);
     }
 
   msg->nr_ip = htons(i);
