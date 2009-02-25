@@ -64,7 +64,7 @@
 static char my_hosts_file[MAX_FILE + 1];
 static char my_sighup_pid_file[MAX_FILE + 1];
 
-static char my_unique_address[16];
+static char my_unique_address[UNIQUE_ADDR_LEN];
 static int my_interval;
 static double my_timeout = MAD_VALID_TIME;
 
@@ -261,6 +261,11 @@ olsr_parser(union olsr_message *m, struct interface *in_if __attribute__ ((unuse
     size = ntohs(m->v6.olsr_msgsize);
     madmessage = (struct madmsg *)&m->v6.message;
   }
+ 
+  if (!memcmp(madmessage->unique_addr, my_unique_address, UNIQUE_ADDR_LEN))
+      return OLSR_FALSE;
+  //if (ipequal(&originator, &olsr_cnf->main_addr))
+  //    return OLSR_FALSE;
 
   update_autoconf_entry(&originator, madmessage, size, vtime);
 
@@ -325,6 +330,7 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
   int i;
   olsr_u32_t max_netmask; 
   union olsr_ip_addr netmask;
+  char buf[64];
 
   OLSR_PRINTF(3, "AUTOCONF PLUGIN: Received Message from %s\n", olsr_ip_to_string(&strbuf, originator));
 
@@ -352,8 +358,7 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
     	if (remote_net == local_net) {
     	
   		// There is a fuckin' collision man!
-  		OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the interface IP %s\n", i,
-                olsr_ip_to_string(&strbuf, from_packet->ip));
+  		OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the interface IP %s\n",inet_ntop(AF_INET,&from_packet->ip,buf, sizeof(buf))); 
   		;
     	}
      }
@@ -365,11 +370,11 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
   	                            from_packet->mask :
   	                            (olsr_u32_t)netmask.v4.s_addr;
 
-      
-    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.sin_addr.s_addr) {
+        olsr_u32_t remote_net = max_netmask & from_packet->ip;
+	olsr_u32_t local_net = max_netmask & hna->net.prefix.v4.s_addr;
+    	if (remote_net == local_net) {
   		  // There is a fuckin' collision man!
-  		  OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the announced IP %s\n", i,
-                olsr_ip_to_string(&strbuf, from_packet->ip));
+  		  OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the announced IP %s\n" , inet_ntop(AF_INET, &from_packet->ip, buf, sizeof(buf)));
 
   		  ;
     	}

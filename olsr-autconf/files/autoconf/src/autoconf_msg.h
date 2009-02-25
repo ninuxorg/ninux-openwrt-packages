@@ -35,7 +35,7 @@
 
 #ifndef _AUTOCONF_MSG
 #define _AUTOCONF_MSG
-
+#define UNIQUE_ADDR_LEN 16
 
 struct mad_entry {
   olsr_u32_t ip;  
@@ -45,7 +45,8 @@ struct mad_entry {
 struct madmsg {
   olsr_u16_t version;                  // version number of the autoconf plugin
   olsr_u16_t nr_ip;
-  union olsr_ip_addr unique_addr;               
+  //union olsr_ip_addr unique_addr;               
+  unsigned char unique_addr[UNIQUE_ADDR_LEN];
 };
 
 #endif
