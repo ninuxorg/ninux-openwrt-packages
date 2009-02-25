@@ -323,6 +323,8 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
   struct mad_entry *from_packet;
   struct ip_prefix_list *hna;
   int i;
+  olsr_u32_t max_netmask; 
+  union olsr_ip_addr netmask;
 
   OLSR_PRINTF(3, "AUTOCONF PLUGIN: Received Message from %s\n", olsr_ip_to_string(&strbuf, originator));
 
@@ -342,7 +344,7 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
 	// CHECK IF SOME IPs collides
 		
 	for (ifn = ifnet; ifn; ifn = ifn->int_next) {
-    	olsr_u32_t max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
+    	max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
   	                             from_packet->mask :
   	                             ifn->int_netmask.sin_addr.s_addr;
   	  
@@ -357,7 +359,6 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
   
 
      for (hna = olsr_cnf->hna_entries; hna != NULL; hna = hna->next) {
-       union olsr_ip_addr netmask;
        olsr_prefix_to_netmask(&netmask, hna->net.prefix_len);
        olsr_u32_t max_netmask = (from_packet->mask >= (olsr_u32_t)netmask.v4.s_addr ) ?
   	                            from_packet->mask :
