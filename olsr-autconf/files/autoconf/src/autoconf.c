@@ -347,8 +347,9 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
     	max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
   	                             from_packet->mask :
   	                             ifn->int_netmask.sin_addr.s_addr;
-  	  
-    	if (max_netmask & from_packet->ip == max_netmask & ifn->int_addr.sin_addr.s_addr) {
+  	olsr_u32_t remote_net = max_netmask & from_packet->ip;
+	olsr_u32_t local_net = max_netmask & ifn->int_addr.sin_addr.s_addr;
+    	if (remote_net == local_net) {
     	
   		// There is a fuckin' collision man!
   		OLSR_PRINTF(4, "AUTOCONF PLUGIN: found collision with the interface IP %s\n", i,
