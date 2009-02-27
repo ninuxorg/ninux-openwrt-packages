@@ -64,7 +64,7 @@
 static char my_hosts_file[MAX_FILE + 1];
 static char my_sighup_pid_file[MAX_FILE + 1];
 
-static char my_unique_address[UNIQUE_ADDR_LEN];
+static char my_unique_addr[UNIQUE_ADDR_LEN];
 static int my_interval;
 static double my_timeout = MAD_VALID_TIME;
 
@@ -120,7 +120,7 @@ set_autoconf_mode(const char *value, void *data, set_plugin_parameter_addon addo
 static const struct olsrd_plugin_parameters plugin_parameters[] = {
   {.name = "interval",.set_plugin_parameter = &set_plugin_int,.data = &my_interval},
   {.name = "timeout",.set_plugin_parameter = &set_plugin_int,.data = &my_timeout},
-  {.name = "unique_addr",.set_plugin_parameter = &set_plugin_string,.data = &my_unique_address,.addon = {sizeof(my_unique_address)} },
+  {.name = "unique_addr",.set_plugin_parameter = &set_plugin_string,.data = &my_unique_addr,.addon = {sizeof(my_unique_addr)} },
   {.name = "mode",.set_plugin_parameter = &set_autoconf_mode,.data = &my_mode },
    
 };
@@ -262,7 +262,7 @@ olsr_parser(union olsr_message *m, struct interface *in_if __attribute__ ((unuse
     madmessage = (struct madmsg *)&m->v6.message;
   }
  
-  if (!memcmp(madmessage->unique_addr, my_unique_address, UNIQUE_ADDR_LEN))
+  if (!memcmp(madmessage->unique_addr, my_unique_addr, UNIQUE_ADDR_LEN))
       return OLSR_FALSE;
   //if (ipequal(&originator, &olsr_cnf->main_addr))
   //    return OLSR_FALSE;
@@ -311,7 +311,8 @@ encap_madmsg(struct madmsg *msg)
      i++;
      pos += sizeof(struct mad_entry);
     }
-
+  
+  memcpy(msg->unique_addr,my_unique_addr,UNIQUE_ADDR_LEN);
   msg->nr_ip = htons(i);
   msg->version = htons(AUTOCONF_PROTOCOL_VERSION);
   
