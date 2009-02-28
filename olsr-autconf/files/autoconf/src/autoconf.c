@@ -293,7 +293,10 @@ encap_madmsg(struct madmsg *msg)
    for (ifn = ifnet; ifn; ifn = ifn->int_next) {
   	// add IP and mask of interfaces
   	memcpy(pos,&ifn->int_addr.sin_addr.s_addr, sizeof(olsr_32_t));
-  	memcpy(pos + sizeof(olsr_32_t) ,&ifn->int_netmask.sin_addr.s_addr,sizeof(olsr_32_t));
+	// No need to announce the subnet
+	// Two nodes belonging to different hosts of the same subnet can exists
+  	//memcpy(pos + sizeof(olsr_32_t) ,&ifn->int_netmask.sin_addr.s_addr,sizeof(olsr_32_t)); 
+	*((olsr_32_t*)(pos)+1)  = 0xFFFFFFFF;
    	i++;
    	pos += sizeof(struct mad_entry);
    }
@@ -351,9 +354,11 @@ update_autoconf_entry(union olsr_ip_addr *originator, struct madmsg *msg, int ms
 	// CHECK IF SOME IPs collides
 		
 	for (ifn = ifnet; ifn; ifn = ifn->int_next) {
-    	max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
-  	                             from_packet->mask :
-  	                             ifn->int_netmask.sin_addr.s_addr;
+	max_netmask = 0xFFFFFFFF;
+	// temp patch
+    	//max_netmask = (from_packet->mask >= ifn->int_netmask.sin_addr.s_addr ) ?
+  	                          //   from_packet->mask :
+  	                          //   ifn->int_netmask.sin_addr.s_addr;
   	olsr_u32_t remote_net = max_netmask & from_packet->ip;
 	olsr_u32_t local_net = max_netmask & ifn->int_addr.sin_addr.s_addr;
     	if (remote_net == local_net) {
