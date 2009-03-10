@@ -8,14 +8,14 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=olsrd
-PKG_VERSION:=0.5.6-r3
-PKG_RELEASE:=2
+PKG_NAME:=olsrd-mdns
+PKG_VERSION:=0.5.7
+PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://www.olsr.org/releases/0.5
-PKG_MD5SUM:=0935688fa0fb5b0e073fe53ec654c5b2
+PKG_SOURCE:=olsrd-mdns.tar.gz
+PKG_SOURCE_URL:=http://aquila.netgroup.uniroma2.it/~saverio/
+PKG_MD5SUM:=86ccb69af601fd204d8d6e52c99dfa92
 
 include $(INCLUDE_DIR)/package.mk
 
