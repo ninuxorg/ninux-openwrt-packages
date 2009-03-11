@@ -15,8 +15,7 @@ PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/
 PKG_SOURCE:=olsrd-mdns.tar.gz
 PKG_SOURCE_URL:=http://aquila.netgroup.uniroma2.it/~saverio/
-PKG_MD5SUM:=86ccb69af601fd204d8d6e52c99dfa92
-
+PKG_MD5SUM:=6496250556c98ccfc76ed4fb10ec08f7
 include $(INCLUDE_DIR)/package.mk
 
 TARGET_CFLAGS += $(FPIC)
