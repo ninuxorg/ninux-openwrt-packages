@@ -4192,7 +4192,6 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.c
 +  int nFdBitsSet;
 +  unsigned char rxBuffer[BMF_BUFFER_SIZE];
 +  fd_set rxFdSet;
-+  OLSR_PRINTF(1,"ENTERING DoMDNS\n");
 +  assert(HighestSkfd >= 0);
 +
 +  /* Make a local copy of the set of file descriptors that select() can
