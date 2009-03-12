@@ -1,6 +1,6 @@
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 Makefile
+diff -r feb3d7883ff0 -r 5bea9b3faa25 Makefile
 --- a/Makefile	Tue Dec 02 11:42:51 2008 +0100
-+++ b/Makefile	Thu Mar 12 02:27:46 2009 +0100
++++ b/Makefile	Thu Mar 12 15:02:12 2009 +0100
 @@ -214,6 +214,10 @@
  		$(MAKECMD) -C lib/bmf 
  		$(MAKECMD) -C lib/bmf DESTDIR=$(DESTDIR) install 
@@ -12,9 +12,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 Makefile
  quagga:
  		$(MAKECMD) -C lib/quagga clean
  		$(MAKECMD) -C lib/quagga 
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/Makefile
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/Makefile
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/Makefile	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/Makefile	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,66 @@
 +#
 +# OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -82,9 +82,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/Makefile
 +		rm -f $(OBJS) $(SRCS:%.c=%.d) $(PLUGIN_FULLNAME)
 +
 +endif
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Address.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/Address.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.c	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/Address.c	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,164 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -250,9 +250,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Address.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Address.h
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/Address.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.h	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/Address.h	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,62 @@
 +#ifndef _BMF_ADDRESS_H
 +#define _BMF_ADDRESS_H
@@ -316,9 +316,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Address.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/NetworkInterfaces.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/NetworkInterfaces.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.c	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/NetworkInterfaces.c	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,1692 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -2012,9 +2012,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/NetworkInterfaces.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/NetworkInterfaces.h
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/NetworkInterfaces.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.h	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/NetworkInterfaces.h	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,162 @@
 +#ifndef _BMF_NETWORKINTERFACES_H
 +#define _BMF_NETWORKINTERFACES_H
@@ -2178,9 +2178,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/NetworkInterfaces.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Packet.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/Packet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.c	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/Packet.c	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,238 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -2420,9 +2420,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Packet.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Packet.h
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/Packet.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.h	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/Packet.h	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,88 @@
 +#ifndef _BMF_PACKET_H
 +#define _BMF_PACKET_H
@@ -2512,9 +2512,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/Packet.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/PacketHistory.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/PacketHistory.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/PacketHistory.c	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/PacketHistory.c	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,324 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -2840,9 +2840,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/PacketHistory.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/PacketHistory.h
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/PacketHistory.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/PacketHistory.h	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/PacketHistory.h	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,75 @@
 +#ifndef _BMF_PACKETHISTORY_H
 +#define _BMF_PACKETHISTORY_H
@@ -2919,10 +2919,10 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/PacketHistory.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/mdns.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.c	Thu Mar 12 02:27:46 2009 +0100
-@@ -0,0 +1,1793 @@
++++ b/lib/mdns/src/mdns.c	Thu Mar 12 15:02:12 2009 +0100
+@@ -0,0 +1,1798 @@
 +/*
 + * OLSR MDNS plugin.
 + * Written by Saverio Proto.
@@ -3074,13 +3074,18 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.c
 +{
 +        union olsr_ip_addr originator;
 +        int size=0;
-+
++        olsr_reltime vtime;
 +        OLSR_PRINTF(2, "MDNS PLUGIN: Received msg in parser\n");
 +        /* Fetch the originator of the messsage */
 +        if(olsr_cnf->ip_version == AF_INET) {
 +                memcpy(&originator, &m->v4.originator, olsr_cnf->ipsize);
++		vtime = me_to_reltime(m->v4.olsr_vtime);
++                size = ntohs(m->v4.olsr_msgsize);
++
 +        } else {
 +                memcpy(&originator, &m->v6.originator, olsr_cnf->ipsize);
++		vtime = me_to_reltime(m->v6.olsr_vtime);
++                size = ntohs(m->v6.olsr_msgsize);
 +        }    
 +
 +        /* Check if message originated from this node.
@@ -4192,6 +4197,7 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.c
 +  int nFdBitsSet;
 +  unsigned char rxBuffer[BMF_BUFFER_SIZE];
 +  fd_set rxFdSet;
++  OLSR_PRINTF(1,"ENTERING DoMDNS\n");
 +  assert(HighestSkfd >= 0);
 +
 +  /* Make a local copy of the set of file descriptors that select() can
@@ -4715,9 +4721,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.h
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/mdns.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.h	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/mdns.h	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,93 @@
 +#ifndef _BMF_BMF_H
 +#define _BMF_BMF_H
@@ -4812,9 +4818,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/mdns.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/olsrd_plugin.c
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/src/olsrd_plugin.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/olsrd_plugin.c	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/src/olsrd_plugin.c	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,185 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -5001,9 +5007,9 @@ diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/src/olsrd_plugin.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r 0a3d279ec6c8 lib/mdns/version-script.txt
+diff -r feb3d7883ff0 -r 5bea9b3faa25 lib/mdns/version-script.txt
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/version-script.txt	Thu Mar 12 02:27:46 2009 +0100
++++ b/lib/mdns/version-script.txt	Thu Mar 12 15:02:12 2009 +0100
 @@ -0,0 +1,10 @@
 +VERS_1.0
 +{
