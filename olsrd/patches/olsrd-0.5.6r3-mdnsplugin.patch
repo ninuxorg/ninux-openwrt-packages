@@ -1,11 +1,3 @@
-diff -r feb3d7883ff0 -r d73e73400732 .hgtags
---- a/.hgtags	Tue Dec 02 11:42:51 2008 +0100
-+++ b/.hgtags	Fri Mar 13 19:16:23 2009 +0100
-@@ -17,3 +17,4 @@
- 1516480b552f48b6922b0f7524dbabd166916bfd OLSRD_0_5_6_RC7
- d91b47b34ba7e8661cd1699fbc7cf7b91b10b66d OLSRD_0_5_6
- 1573e530a6799aafc26ffeaecffab0e2b6931d9b OLSRD_0_5_6_R2
-+feb3d7883ff0a8d57a00b8a79882089e09e705d2 OLSRD_0_5_6_R3
 diff -r feb3d7883ff0 -r d73e73400732 Makefile
 --- a/Makefile	Tue Dec 02 11:42:51 2008 +0100
 +++ b/Makefile	Fri Mar 13 19:16:23 2009 +0100
