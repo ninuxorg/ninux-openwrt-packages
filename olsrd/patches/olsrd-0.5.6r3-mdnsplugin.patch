@@ -1,6 +1,6 @@
-diff -r feb3d7883ff0 -r d73e73400732 Makefile
+diff -r feb3d7883ff0 -r bce022dcdcd8 Makefile
 --- a/Makefile	Tue Dec 02 11:42:51 2008 +0100
-+++ b/Makefile	Fri Mar 13 19:16:23 2009 +0100
++++ b/Makefile	Mon Mar 16 19:04:32 2009 +0100
 @@ -39,7 +39,7 @@
  # Please also write a new version to:
  # gui/win32/Main/Frontend.rc (line 71, around "CAPTION [...]")
@@ -30,22 +30,54 @@ diff -r feb3d7883ff0 -r d73e73400732 Makefile
  quagga:
  		$(MAKECMD) -C lib/quagga clean
  		$(MAKECMD) -C lib/quagga 
-diff -r feb3d7883ff0 -r d73e73400732 Makefile.inc
+diff -r feb3d7883ff0 -r bce022dcdcd8 Makefile.inc
 --- a/Makefile.inc	Tue Dec 02 11:42:51 2008 +0100
-+++ b/Makefile.inc	Fri Mar 13 19:16:23 2009 +0100
-@@ -87,7 +87,8 @@
++++ b/Makefile.inc	Mon Mar 16 19:04:32 2009 +0100
+@@ -10,6 +10,9 @@
+ # compile OLSR_PRINTF out
+ NO_DEBUG_MESSAGES ?= 0
+ 
++# the optimize option to be set for gcc
++OPTIMIZE ?= 
++
+ # enable mudflap with 1 or deactivate with 0
+ # you need a recent enough gcc and the libmudflap installed
+ MUDFLAP ?= 0
+@@ -87,14 +90,14 @@
  #WARNINGS +=	-Wunreachable-code
  WARNINGS +=	-Winline
  WARNINGS +=	-Wdisabled-optimization
 -WARNINGS +=	-Werror
-+# Disable -Werror in stable branch
 +#WARNINGS +=	-Werror
  WARNINGS +=	-finline-functions-called-once
  WARNINGS +=	-fearly-inlining
  ifeq ($(DEBUG),0)
-diff -r feb3d7883ff0 -r d73e73400732 files/olsrd.conf.default.lq
+ WARNINGS +=	-fomit-frame-pointer
+ endif
+ # we have small inline functions in src/lq_route.h which should always be inlined
+-WARNINGS +=	-finline-limit=700
++WARNINGS +=	-finline-limit=350
+ # These tell gcc to put each function and global variable in a separate section.
+ # The linker can than remove all unreferenced section. But in the olsrd binary
+ # unused doesn't imply unused at all since the function may be used by plugins,
+@@ -177,14 +180,11 @@
+ ifeq ($(DEBUG),1)
+ CPPFLAGS +=	-DDEBUG
+ CFLAGS +=	-ggdb
+-OPTIMIZE ?=	-O0
+ else
+ CPPFLAGS +=	-DNDEBUG
+-OPTIMIZE ?=	-O2
+ endif
+ ifeq ($(NO_DEBUG_MESSAGES),1)
+ CPPFLAGS +=	-DNODEBUG
+-OPTIMIZE ?=	-Os
+ endif
+ 
+ # a make function to quote "/" and "."
+diff -r feb3d7883ff0 -r bce022dcdcd8 files/olsrd.conf.default.lq
 --- a/files/olsrd.conf.default.lq	Tue Dec 02 11:42:51 2008 +0100
-+++ b/files/olsrd.conf.default.lq	Fri Mar 13 19:16:23 2009 +0100
++++ b/files/olsrd.conf.default.lq	Mon Mar 16 19:04:32 2009 +0100
 @@ -128,7 +128,8 @@
  LinkQualityLevel	2
  
@@ -56,9 +88,9 @@ diff -r feb3d7883ff0 -r d73e73400732 files/olsrd.conf.default.lq
  
  #LinkQualityAging 0.1 
  
-diff -r feb3d7883ff0 -r d73e73400732 files/olsrd.conf.default.lq-fisheye
+diff -r feb3d7883ff0 -r bce022dcdcd8 files/olsrd.conf.default.lq-fisheye
 --- a/files/olsrd.conf.default.lq-fisheye	Tue Dec 02 11:42:51 2008 +0100
-+++ b/files/olsrd.conf.default.lq-fisheye	Fri Mar 13 19:16:23 2009 +0100
++++ b/files/olsrd.conf.default.lq-fisheye	Mon Mar 16 19:04:32 2009 +0100
 @@ -138,7 +138,8 @@
  LinkQualityLevel	2
  
@@ -69,9 +101,9 @@ diff -r feb3d7883ff0 -r d73e73400732 files/olsrd.conf.default.lq-fisheye
  
  #LinkQualityAging 0.1 
  
-diff -r feb3d7883ff0 -r d73e73400732 gui/linux-gtk/README
+diff -r feb3d7883ff0 -r bce022dcdcd8 gui/linux-gtk/README
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/gui/linux-gtk/README	Fri Mar 13 19:16:23 2009 +0100
++++ b/gui/linux-gtk/README	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,11 @@
 +To compile this you need libgtk installed. This is
 +from my system, which compiles fine:
@@ -84,9 +116,9 @@ diff -r feb3d7883ff0 -r d73e73400732 gui/linux-gtk/README
 +ii  libwxgtk2.6-0                              2.6.3.2.2-2ubuntu4                                   wxWidgets Cross-platform C++ GUI toolkit (GT
 +ii  python-gtk2                                2.12.1-0ubuntu1                                      Python bindings for the GTK+ widget set
 +ii  python-gtk2-dev                            2.12.1-0ubuntu1                                      GTK+ bindings: devel files
-diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Inst/installer.nsi
+diff -r feb3d7883ff0 -r bce022dcdcd8 gui/win32/Inst/installer.nsi
 --- a/gui/win32/Inst/installer.nsi	Tue Dec 02 11:42:51 2008 +0100
-+++ b/gui/win32/Inst/installer.nsi	Fri Mar 13 19:16:23 2009 +0100
++++ b/gui/win32/Inst/installer.nsi	Mon Mar 16 19:04:32 2009 +0100
 @@ -54,7 +54,7 @@
  UninstPage instfiles
  
@@ -96,9 +128,9 @@ diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Inst/installer.nsi
          Abort
  NoAbort:
  FunctionEnd
-diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/Frontend.rc
+diff -r feb3d7883ff0 -r bce022dcdcd8 gui/win32/Main/Frontend.rc
 --- a/gui/win32/Main/Frontend.rc	Tue Dec 02 11:42:51 2008 +0100
-+++ b/gui/win32/Main/Frontend.rc	Fri Mar 13 19:16:23 2009 +0100
++++ b/gui/win32/Main/Frontend.rc	Mon Mar 16 19:04:32 2009 +0100
 @@ -68,7 +68,7 @@
  STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
      WS_SYSMENU
@@ -108,9 +140,9 @@ diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/Frontend.rc
  FONT 8, "MS Sans Serif", 0, 0, 0x1
  BEGIN
      CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",0x0,7,7,383,256
-diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/MyDialog2.cpp
+diff -r feb3d7883ff0 -r bce022dcdcd8 gui/win32/Main/MyDialog2.cpp
 --- a/gui/win32/Main/MyDialog2.cpp	Tue Dec 02 11:42:51 2008 +0100
-+++ b/gui/win32/Main/MyDialog2.cpp	Fri Mar 13 19:16:23 2009 +0100
++++ b/gui/win32/Main/MyDialog2.cpp	Mon Mar 16 19:04:32 2009 +0100
 @@ -392,7 +392,7 @@
  	::lstrcpy(Int->name, Name);
  
@@ -138,9 +170,9 @@ diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/MyDialog2.cpp
  
  		IpcHost->next = Conf->ipc_nets;
  		Conf->ipc_nets = IpcHost;
-diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/TrayIcon.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 gui/win32/Main/TrayIcon.h
 --- a/gui/win32/Main/TrayIcon.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/gui/win32/Main/TrayIcon.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/gui/win32/Main/TrayIcon.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -12,7 +12,8 @@
  
    static TrayIcon *getInstance() {
@@ -151,9 +183,21 @@ diff -r feb3d7883ff0 -r d73e73400732 gui/win32/Main/TrayIcon.h
  
    void setStatus(status con_status, const char *message);
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/bmf/src/NetworkInterfaces.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/bmf/src/Address.c
+--- a/lib/bmf/src/Address.c	Tue Dec 02 11:42:51 2008 +0100
++++ b/lib/bmf/src/Address.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -140,7 +140,7 @@
+   udpHeader = (struct udphdr *)(ipPacket + ipHeaderLen);
+   destPort = ntohs(udpHeader->dest);
+ 
+-  if (destPort == OLSRPORT || destPort == BMF_ENCAP_PORT || destPort == 51698)
++  if (destPort == olsr_cnf->olsrport || destPort == BMF_ENCAP_PORT || destPort == 51698)
+     /* TODO: #define for 51698 */
+   {
+     return 1;
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/bmf/src/NetworkInterfaces.c
 --- a/lib/bmf/src/NetworkInterfaces.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/bmf/src/NetworkInterfaces.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/bmf/src/NetworkInterfaces.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -700,7 +700,7 @@
  #endif
            OLSR_PRINTF(9, "%s: ----> Not forwarding to %s: \"%s\" gives a better link to this neighbor, costing %s\n",
@@ -181,9 +225,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/bmf/src/NetworkInterfaces.c
  
                continue;         /* for */
              }                   /* if */
-diff -r feb3d7883ff0 -r d73e73400732 lib/bmf/src/olsrd_plugin.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/bmf/src/olsrd_plugin.c
 --- a/lib/bmf/src/olsrd_plugin.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/bmf/src/olsrd_plugin.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/bmf/src/olsrd_plugin.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -45,7 +45,7 @@
  /* OLSRD includes */
  #include "olsrd_plugin.h"
@@ -193,9 +237,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/bmf/src/olsrd_plugin.c
  #include "scheduler.h"          /* olsr_start_timer() */
  
  /* BMF includes */
-diff -r feb3d7883ff0 -r d73e73400732 lib/dot_draw/src/olsrd_dot_draw.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/dot_draw/src/olsrd_dot_draw.c
 --- a/lib/dot_draw/src/olsrd_dot_draw.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/dot_draw/src/olsrd_dot_draw.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/dot_draw/src/olsrd_dot_draw.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -105,7 +105,7 @@
  
  static void ipc_print_tc_link(const struct tc_entry *, const struct tc_edge_entry *);
@@ -237,9 +281,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/dot_draw/src/olsrd_dot_draw.c
  {
    struct ipaddr_str gwbuf, netbuf;
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/dyn_gw/src/olsrd_dyn_gw.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/dyn_gw/src/olsrd_dyn_gw.c
 --- a/lib/dyn_gw/src/olsrd_dyn_gw.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/dyn_gw/src/olsrd_dyn_gw.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/dyn_gw/src/olsrd_dyn_gw.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -101,20 +101,20 @@
  
  struct hna_list {
@@ -295,9 +339,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/dyn_gw/src/olsrd_dyn_gw.c
  {
    struct hna_list *new = malloc(sizeof(struct hna_list));
    if (new == NULL) {
-diff -r feb3d7883ff0 -r d73e73400732 lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c
 --- a/lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -105,8 +105,8 @@
  int
  check_gw(union olsr_ip_addr *net, union olsr_ip_addr *mask)
@@ -309,9 +353,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/dyn_gw_plain/src/olsrd_dyn_gw_plain.c
    unsigned int iflags;
    int num, metric, refcnt, use;
    int retval = 0;
-diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/admin_interface.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/httpinfo/src/admin_interface.c
 --- a/lib/httpinfo/src/admin_interface.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/httpinfo/src/admin_interface.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/httpinfo/src/admin_interface.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -85,7 +85,7 @@
    "</table>\n<br>\n" "<center><input type=\"submit\" value=\"Delete selected\" class=\"input_button\"></center>\n" "</form>\n";
  
@@ -391,9 +435,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/admin_interface.c
  
    size += sprintf(buf, "<html>\n<head><title>olsr.org httpinfo plugin</title></head>\n<body>\n");
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/admin_interface.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/httpinfo/src/admin_interface.h
 --- a/lib/httpinfo/src/admin_interface.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/httpinfo/src/admin_interface.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/httpinfo/src/admin_interface.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -46,9 +46,9 @@
  #ifndef ADMIN_INTERFACE_H
  #define ADMIN_INTERFACE_H
@@ -406,9 +450,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/admin_interface.h
  
  int process_param(char *, char *);
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/olsrd_httpinfo.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/httpinfo/src/olsrd_httpinfo.c
 --- a/lib/httpinfo/src/olsrd_httpinfo.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/httpinfo/src/olsrd_httpinfo.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/httpinfo/src/olsrd_httpinfo.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -130,13 +130,13 @@
    "text-align: center;\nwidth: 120px;\npadding: 0px;\ncolor: #000000;\n"
    "text-decoration: none;\nfont-family: verdana;\nfont-size: 12px;\n" "border: 1px solid #000;\n}\n";
@@ -874,9 +918,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/olsrd_httpinfo.c
  {
    int size = 0;
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/olsrd_httpinfo.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/httpinfo/src/olsrd_httpinfo.h
 --- a/lib/httpinfo/src/olsrd_httpinfo.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/httpinfo/src/olsrd_httpinfo.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/httpinfo/src/olsrd_httpinfo.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -66,10 +66,10 @@
  } http_header_type;
  
@@ -892,9 +936,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/httpinfo/src/olsrd_httpinfo.h
  };
  
  extern struct olsrd_config *olsr_cfg;
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/Makefile
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/Makefile
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/Makefile	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/Makefile	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,66 @@
 +#
 +# OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -962,9 +1006,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/Makefile
 +		rm -f $(OBJS) $(SRCS:%.c=%.d) $(PLUGIN_FULLNAME)
 +
 +endif
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Address.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/Address.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/Address.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,164 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -1130,9 +1174,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Address.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Address.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/Address.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/Address.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,62 @@
 +#ifndef _BMF_ADDRESS_H
 +#define _BMF_ADDRESS_H
@@ -1196,9 +1240,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Address.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/NetworkInterfaces.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/NetworkInterfaces.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/NetworkInterfaces.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,1703 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -2903,9 +2947,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/NetworkInterfaces.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/NetworkInterfaces.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/NetworkInterfaces.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/NetworkInterfaces.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,162 @@
 +#ifndef _BMF_NETWORKINTERFACES_H
 +#define _BMF_NETWORKINTERFACES_H
@@ -3069,9 +3113,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/NetworkInterfaces.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Packet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/Packet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/Packet.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,238 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -3311,9 +3355,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Packet.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Packet.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/Packet.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/Packet.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,88 @@
 +#ifndef _BMF_PACKET_H
 +#define _BMF_PACKET_H
@@ -3403,9 +3447,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/Packet.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/PacketHistory.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/PacketHistory.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/PacketHistory.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/PacketHistory.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,324 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -3731,9 +3775,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/PacketHistory.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/PacketHistory.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/PacketHistory.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/PacketHistory.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/PacketHistory.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,75 @@
 +#ifndef _BMF_PACKETHISTORY_H
 +#define _BMF_PACKETHISTORY_H
@@ -3810,9 +3854,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/PacketHistory.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/mdns.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/mdns.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/mdns.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,1174 @@
 +/*
 + * OLSR MDNS plugin.
@@ -4988,9 +5032,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/mdns.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/mdns.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/mdns.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/mdns.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,95 @@
 +#ifndef _BMF_BMF_H
 +#define _BMF_BMF_H
@@ -5087,9 +5131,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/mdns.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/olsrd_plugin.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/src/olsrd_plugin.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/olsrd_plugin.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/src/olsrd_plugin.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,185 @@
 +/*
 + * OLSR Basic Multicast Forwarding (BMF) plugin.
@@ -5276,9 +5320,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/src/olsrd_plugin.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/version-script.txt
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/mdns/version-script.txt
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/version-script.txt	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/mdns/version-script.txt	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,10 @@
 +VERS_1.0
 +{
@@ -5290,9 +5334,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/mdns/version-script.txt
 +  local:
 +    *;
 +};
-diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/README_NAMESERVICE
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/nameservice/README_NAMESERVICE
 --- a/lib/nameservice/README_NAMESERVICE	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/nameservice/README_NAMESERVICE	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/nameservice/README_NAMESERVICE	Mon Mar 16 19:04:32 2009 +0100
 @@ -112,12 +112,32 @@
          table. Useful for executing a script that uses the hosts file
          to keep a website or a database updated.
@@ -5326,9 +5370,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/README_NAMESERVICE
  ---------------------------------------------------------------------
  SAMPLE CONFIG
  ---------------------------------------------------------------------
-diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/mapwrite.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/nameservice/src/mapwrite.c
 --- a/lib/nameservice/src/mapwrite.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/nameservice/src/mapwrite.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/nameservice/src/mapwrite.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -167,7 +167,7 @@
          if (0 >
              fprintf(fmap, "PLink('%s','%s',%s,%s,%s,%s);\n", olsr_ip_to_string(&strbuf1, &tc_edge->T_dest_addr),
@@ -5363,9 +5407,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/mapwrite.c
  }
  
  void
-diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/nameservice/src/nameservice.c
 --- a/lib/nameservice/src/nameservice.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/nameservice/src/nameservice.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/nameservice/src/nameservice.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -75,8 +75,10 @@
  static double my_timeout = NAME_VALID_TIME;
  static char my_resolv_file[MAX_FILE + 1];
@@ -6089,9 +6133,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice.c
  }
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/nameservice/src/nameservice.h
 --- a/lib/nameservice/src/nameservice.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/nameservice/src/nameservice.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/nameservice/src/nameservice.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -85,8 +85,8 @@
   */
  struct name_entry {
@@ -6161,9 +6205,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice.h
  
  void lookup_defhna_latlon(union olsr_ip_addr *ip);
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice_msg.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/nameservice/src/nameservice_msg.h
 --- a/lib/nameservice/src/nameservice_msg.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/nameservice/src/nameservice_msg.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/nameservice/src/nameservice_msg.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -43,6 +43,7 @@
    NAME_FORWARDER = 1,
    NAME_SERVICE = 2,
@@ -6194,9 +6238,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/nameservice/src/nameservice_msg.h
    /*
     * at least one struct name following
     */
-diff -r feb3d7883ff0 -r d73e73400732 lib/pgraph/src/olsrd_pgraph.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/pgraph/src/olsrd_pgraph.c
 --- a/lib/pgraph/src/olsrd_pgraph.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/pgraph/src/olsrd_pgraph.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/pgraph/src/olsrd_pgraph.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -215,7 +215,7 @@
  plugin_ipc_init(void)
  {
@@ -6215,9 +6259,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/pgraph/src/olsrd_pgraph.c
  #define FLAG 0
  #else
  #define FLAG MSG_NOSIGNAL
-diff -r feb3d7883ff0 -r d73e73400732 lib/secure/src/olsrd_secure.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/secure/src/olsrd_secure.c
 --- a/lib/secure/src/olsrd_secure.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/secure/src/olsrd_secure.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/secure/src/olsrd_secure.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -73,7 +73,7 @@
  #include "md5.h"
  
@@ -6564,9 +6608,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/secure/src/olsrd_secure.c
    struct stamp *entry;
    struct ipaddr_str buf;
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/secure/src/secure_messages.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/secure/src/secure_messages.h
 --- a/lib/secure/src/secure_messages.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/secure/src/secure_messages.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/secure/src/secure_messages.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -77,12 +77,12 @@
   ****************************************************************************/
  
@@ -6730,9 +6774,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/secure/src/secure_messages.h
    struct s_olsrmsg6 olsr_msg[1];       /* variable messages */
  };
  
-diff -r feb3d7883ff0 -r d73e73400732 lib/tas/src/lua/lobject.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/tas/src/lua/lobject.c
 --- a/lib/tas/src/lua/lobject.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/tas/src/lua/lobject.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/tas/src/lua/lobject.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -42,11 +42,11 @@
    return (m << 3) | cast(int, x);
  }
@@ -6762,9 +6806,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/tas/src/lua/lobject.c
  
  int
  luaO_rawequalObj(const TObject * t1, const TObject * t2)
-diff -r feb3d7883ff0 -r d73e73400732 lib/tas/src/plugin.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/tas/src/plugin.c
 --- a/lib/tas/src/plugin.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/tas/src/plugin.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/tas/src/plugin.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -118,7 +118,7 @@
             rawIpAddrToString(&iterLinkTab->local_iface_addr, ipAddrLen), rawIpAddrToString(&iterLinkTab->neighbor_iface_addr,
                                                                                             ipAddrLen),
@@ -6843,9 +6887,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/tas/src/plugin.c
  }
  
  void
-diff -r feb3d7883ff0 -r d73e73400732 lib/txtinfo/src/olsrd_txtinfo.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 lib/txtinfo/src/olsrd_txtinfo.c
 --- a/lib/txtinfo/src/olsrd_txtinfo.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/lib/txtinfo/src/olsrd_txtinfo.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/lib/txtinfo/src/olsrd_txtinfo.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -155,7 +155,7 @@
    struct sockaddr_storage sst;
    struct sockaddr_in *sin;
@@ -6891,9 +6935,9 @@ diff -r feb3d7883ff0 -r d73e73400732 lib/txtinfo/src/olsrd_txtinfo.c
        alias = entry->aliases;
        is_first = 1;
  
-diff -r feb3d7883ff0 -r d73e73400732 release-howto.txt
+diff -r feb3d7883ff0 -r bce022dcdcd8 release-howto.txt
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/release-howto.txt	Fri Mar 13 19:16:23 2009 +0100
++++ b/release-howto.txt	Mon Mar 16 19:04:32 2009 +0100
 @@ -0,0 +1,93 @@
 +cheat sheet for making a (stable) release tarball.
 +
@@ -6988,9 +7032,9 @@ diff -r feb3d7883ff0 -r d73e73400732 release-howto.txt
 +   commit & push
 +
 +you are done, congratulations !
-diff -r feb3d7883ff0 -r d73e73400732 src/bsd/kernel_routes.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/bsd/kernel_routes.c
 --- a/src/bsd/kernel_routes.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/bsd/kernel_routes.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/bsd/kernel_routes.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -46,14 +46,17 @@
  #include "net_olsr.h"
  #include "ipcalc.h"
@@ -7351,9 +7395,21 @@ diff -r feb3d7883ff0 -r d73e73400732 src/bsd/kernel_routes.c
    return 0;
  }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/build_msg.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/bsd/net.c
+--- a/src/bsd/net.c	Tue Dec 02 11:42:51 2008 +0100
++++ b/src/bsd/net.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -370,7 +370,7 @@
+ 
+   memset(&sin, 0, sizeof(sin));
+   sin.sin_family = AF_INET;
+-  sin.sin_port = htons(OLSRPORT);
++  sin.sin_port = htons(olsr_cnf->olsrport);
+   sin.sin_addr.s_addr = INADDR_ANY;
+   if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+     perror("bind");
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/build_msg.c
 --- a/src/build_msg.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/build_msg.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/build_msg.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -64,7 +64,7 @@
  
  /* All these functions share this buffer */
@@ -7866,9 +7922,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/build_msg.c
  
  }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/build_msg.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/build_msg.h
 --- a/src/build_msg.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/build_msg.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/build_msg.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -50,13 +50,13 @@
  
  clock_t get_empty_tc_timer(void);
@@ -7887,10 +7943,45 @@ diff -r feb3d7883ff0 -r d73e73400732 src/build_msg.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/cfgfile_gen.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/cfgfile_gen.c
 --- a/src/cfgparser/cfgfile_gen.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/cfgfile_gen.c	Fri Mar 13 19:16:23 2009 +0100
-@@ -344,7 +344,7 @@
++++ b/src/cfgparser/cfgfile_gen.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -108,10 +108,18 @@
+   fprintf(fd, "# TOS(type of service) to use. Default is 16\n\n");
+   fprintf(fd, "TosValue\t%d\n\n", cnf->tos);
+ 
++  /* OlsrPort */
++  fprintf(fd, "# Port to use. Default is 698! and using other port than IANA assigned one needs a really good reason!\n#possible values 698 or >1000\n\n");
++  fprintf(fd, "OlsrPort\t\t%d\n\n", cnf->olsrport);
++
+   /* RtTable */
+   fprintf(fd, "# Policy Routing Table to use. Default is 254\n\n");
+   fprintf(fd, "RtTable\t\t%d\n\n", cnf->rttable);
+ 
++  /* RtProto */
++  fprintf(fd, "# Policy Routing Proto to use. Default is 3\n\n");
++  fprintf(fd, "RtProto\t\t%d\n\n", cnf->rtproto);
++
+   /* RtTableDefault */
+   fprintf(fd,
+           "# Policy Routing Table to use for the default Route. Default is 0 (Take the same table as specified by RtTable)\n\n");
+@@ -236,6 +244,15 @@
+       } else {
+         fprintf(fd, "    #Ip4Broadcast\t255.255.255.255\n\n");
+       }
++ 
++      fprintf(fd,
++              "    # Interface Mode to use. Defines\n    # forward behaviour depending on\n    # interface type\n    # valid option are mesh and ether\nDefault is mesh!\n\n");
++
++      if (in->cnf->mode!=IF_MODE_ETHER) {
++        fprintf(fd, "    #Mode\tMesh\n\n");
++      } else {
++        fprintf(fd, "    Mode\tEther\n\n");
++      }
+ 
+       fprintf(fd, "    # IPv6 address scope to use.\n    # Must be 'site-local' or 'global'\n\n");
+       if (in->cnf->ipv6_addrtype)
+@@ -344,7 +361,7 @@
      } while (0)
  
  int
@@ -7899,7 +7990,26 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/cfgfile_gen.c
  {
    struct ip_prefix_list *h = cnf->hna_entries;
    struct olsr_if *in = cnf->interfaces;
-@@ -496,7 +496,7 @@
+@@ -398,9 +415,17 @@
+   WRITE_TO_BUF("TosValue\t%d\n\n", cnf->tos);
+ 
+   /* RtTable */
+-  WRITE_TO_BUF("# Policy Routing Tableto use. Default is 254\n\n");
++  WRITE_TO_BUF("# Port to use. Default is 698! and using other port than IANA assigned one needs a really good reason!!\n\n");
++  WRITE_TO_BUF("OlsrPort\t\t%d\n\n", cnf->olsrport);
++
++  /* RtTable */
++  WRITE_TO_BUF("# Policy Routing Table to use. Default is 254\n\n");
+   WRITE_TO_BUF("RtTable\t\t%d\n\n", cnf->rttable);
+ 
++  /* RtProto */
++  WRITE_TO_BUF("# Routing proto flag to use. Default is 3 (BOOT)\n\n");
++  WRITE_TO_BUF("RtProto\t\t%d\n\n", cnf->rtproto);
++
+   /* Willingness */
+   WRITE_TO_BUF
+     ("# The fixed willingness to use(0-7)\n# If not set willingness will be calculated\n# dynammically based on battery/power status\n\n");
+@@ -496,7 +521,7 @@
    WRITE_TO_BUF("# can shar the same config block. Just list the\n# interfaces(e.g. Interface \"eth0\" \"eth2\"\n\n");
    /* Interfaces */
    if (in) {
@@ -7908,7 +8018,25 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/cfgfile_gen.c
      while (in) {
        WRITE_TO_BUF("Interface \"%s\" {\n", in->name);
  
-@@ -609,7 +609,7 @@
+@@ -512,6 +537,17 @@
+       }
+ 
+       if (first)
++        WRITE_TO_BUF
++          ("   # Interface Mode to use. Defines\n    # forward behaviour depending on\n    # interface type\n    # valid option are [mesh] and ether\n\n");
++
++      if (in->cnf->mode!=1) {
++        WRITE_TO_BUF("    #Mode\tmesh\n\n");
++      } else {
++        if (first)
++          WRITE_TO_BUF("    Mode\tether\n\n");
++      }
++
++      if (first)
+         WRITE_TO_BUF("\n");
+ 
+       if (first)
+@@ -609,7 +645,7 @@
  
        WRITE_TO_BUF("}\n\n");
        in = in->next;
@@ -7917,9 +8045,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/cfgfile_gen.c
      }
  
    }
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/local.mk
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/local.mk
 --- a/src/cfgparser/local.mk	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/local.mk	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/cfgparser/local.mk	Mon Mar 16 19:04:32 2009 +0100
 @@ -61,7 +61,7 @@
  $(C)oscan.o: $(C)oparse.c
  $(C)oscan.o: CFLAGS := $(filter-out -Wunreachable-code -Wsign-compare,$(CFLAGS)) -Wno-sign-compare
@@ -7929,9 +8057,26 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/local.mk
  
  $(C)oparse.c: $(C)oparse.y $(C)olsrd_conf.h $(C)Makefile
  	$(BISON) -d -o "$@-tmp" "$<"
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/olsrd.conf.example
+--- a/src/cfgparser/olsrd.conf.example	Tue Dec 02 11:42:51 2008 +0100
++++ b/src/cfgparser/olsrd.conf.example	Mon Mar 16 19:04:32 2009 +0100
+@@ -238,6 +238,13 @@
+ 
+     # Ip4Broadcast	255.255.255.255
+ 
++    # Interface Mode is used to prevent unnecessary
++    # packet forwardin on switched ethernet interfaces
++    # valid Modes are mesh and ether
++    # The default value is mesh!
++
++    # Mode ether
++
+     # IPv6 address scope to use.
+     # Must be 'site-local' or 'global'
+ 
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/olsrd_conf.c
 --- a/src/cfgparser/olsrd_conf.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/olsrd_conf.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/cfgparser/olsrd_conf.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -150,9 +150,9 @@
  
    for (in = olsr_cnf->interfaces; in != NULL; in = in->next) {
@@ -7969,7 +8114,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
      fprintf(stderr, "Hysteresis and LinkQuality cannot both be active! Deactivate one of them.\n");
      return -1;
    }
-@@ -388,8 +388,8 @@
+@@ -388,14 +388,16 @@
    memset(cnf, 0, sizeof(*cnf));
  
    cnf->debug_level = DEF_DEBUGLVL;
@@ -7980,7 +8125,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
    cnf->ip_version = AF_INET;
    cnf->ipsize = sizeof(struct in_addr);
    cnf->maxplen = 32;
-@@ -420,7 +420,7 @@
+   cnf->allow_no_interfaces = DEF_ALLOW_NO_INTS;
+   cnf->tos = DEF_TOS;
++  cnf->olsrport = DEF_OLSRPORT;
+   cnf->rttable = 254;
++  cnf->rtproto = 3;
+   cnf->rttable_default = 0;
+   cnf->willingness_auto = DEF_WILL_AUTO;
+   cnf->ipc_connections = DEF_IPC_CONNECTIONS;
+@@ -420,7 +422,7 @@
    cnf->lq_nat_thresh = DEF_LQ_NAT_THRESH;
    cnf->clear_screen = DEF_CLEAR_SCREEN;
  
@@ -7989,7 +8142,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
    cnf->will_int = 10 * HELLO_INTERVAL;
    cnf->max_jitter = 0.0;
    cnf->exit_value = EXIT_SUCCESS;
-@@ -458,7 +458,7 @@
+@@ -458,7 +460,7 @@
  
    io->lq_mult = NULL;
  
@@ -7998,7 +8151,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
    io->weight.value = 0;
  
    io->ipv6_addrtype = 0;        /* global */
-@@ -471,7 +471,7 @@
+@@ -471,7 +473,7 @@
    io->mid_params.validity_time = MID_HOLD_TIME;
    io->hna_params.emission_interval = HNA_INTERVAL;
    io->hna_params.validity_time = HNA_HOLD_TIME;
@@ -8007,7 +8160,28 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
  
    return io;
  
-@@ -660,7 +660,7 @@
+@@ -499,6 +501,7 @@
+   else
+     printf("No interfaces    : NOT ALLOWED\n");
+   printf("TOS              : 0x%02x\n", cnf->tos);
++  printf("OlsrPort          : 0x%03x\n", cnf->olsrport);
+   printf("RtTable          : 0x%02x\n", cnf->rttable);
+   printf("RtTableDefault   : 0x%02x\n", cnf->rttable_default);
+   if (cnf->willingness_auto)
+@@ -550,6 +553,12 @@
+       } else {
+         printf("\tIPv4 broadcast           : AUTO\n");
+       }
++      
++      if (in->cnf->mode==IF_MODE_ETHER){
++        printf("\tMode           : ether\n");
++      } else {
++        printf("\tMode           : mesh\n");
++      }
+ 
+       printf("\tIPv6 addrtype            : %s\n", in->cnf->ipv6_addrtype ? "site-local" : "global");
+ 
+@@ -660,7 +669,7 @@
  #endif
  
  void
@@ -8016,7 +8190,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
  {
    struct ip_prefix_list *new_entry = malloc(sizeof(*new_entry));
  
-@@ -673,7 +673,7 @@
+@@ -673,7 +682,7 @@
  }
  
  int
@@ -8025,7 +8199,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
  {
    struct ip_prefix_list *h = *list, *prev = NULL;
  
-@@ -695,7 +695,7 @@
+@@ -695,7 +704,7 @@
  }
  
  struct ip_prefix_list *
@@ -8034,9 +8208,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.c
  {
    struct ip_prefix_list *h;
    for (h = list; h != NULL; h = h->next) {
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/olsrd_conf.h
 --- a/src/cfgparser/olsrd_conf.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/olsrd_conf.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/cfgparser/olsrd_conf.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -50,9 +50,9 @@
  extern int current_line;
  
@@ -8049,9 +8223,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/olsrd_conf.h
    char *string;
  };
  
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oparse.y
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/oparse.y
 --- a/src/cfgparser/oparse.y	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/oparse.y	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/cfgparser/oparse.y	Mon Mar 16 19:04:32 2009 +0100
 @@ -104,7 +104,7 @@
      }
  
@@ -8061,7 +8235,42 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oparse.y
  
      mult->next = walker->cnf->lq_mult;
      walker->cnf->lq_mult = mult;
-@@ -415,7 +415,7 @@
+@@ -174,6 +174,8 @@
+ %token TOK_NOINT
+ %token TOK_TOS
+ %token TOK_RTTABLE
++%token TOK_OLSRPORT
++%token TOK_RTPROTO
+ %token TOK_RTTABLE_DEFAULT
+ %token TOK_WILLINGNESS
+ %token TOK_IPCCON
+@@ -202,6 +204,7 @@
+ %token TOK_MAXIPC
+ 
+ %token TOK_IP4BROADCAST
++%token TOK_IFMODE
+ %token TOK_IP6ADDRTYPE
+ %token TOK_IP6MULTISITE
+ %token TOK_IP6MULTIGLOBAL
+@@ -234,7 +237,9 @@
+           | fibmetric
+           | bnoint
+           | atos
++          | aolsrport
+           | arttable
++          | artproto
+           | arttable_default
+           | awillingness
+           | busehyst
+@@ -310,6 +315,7 @@
+ ifstmt:      vcomment
+              | iifweight
+              | isetip4br
++             | isetifmode
+              | isetip6addrt
+              | isetip6mults
+              | isetip6multg
+@@ -415,7 +421,7 @@
  
    while (ifcnt) {
      ifs->cnf->weight.value = $2->integer;
@@ -8070,7 +8279,64 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oparse.y
  
      ifs = ifs->next;
      ifcnt--;
-@@ -892,7 +892,7 @@
+@@ -450,6 +456,25 @@
+ }
+ ;
+ 
++isetifmode: TOK_IFMODE TOK_STRING
++{
++  int ifcnt = ifs_in_curr_cfg;
++  struct olsr_if *ifs = olsr_cnf->interfaces;
++
++  PARSER_DEBUG_PRINTF("\tMode: %d\n", $2->string);
++    while (ifcnt) {
++      ifs->cnf->mode = (strcmp($2->string, "ether") == 0)?IF_MODE_ETHER:IF_MODE_MESH;
++
++      ifs = ifs->next;
++      ifcnt--;
++    }
++
++  free($2->string);
++  free($2);
++}
++;
++
++
+ isetip6addrt: TOK_IP6ADDRTYPE TOK_IP6TYPE
+ {
+   int ifcnt = ifs_in_curr_cfg;
+@@ -873,6 +898,15 @@
+ }
+ ;
+ 
++aolsrport: TOK_OLSRPORT TOK_INTEGER
++{
++  PARSER_DEBUG_PRINTF("OlsrPort: %d\n", $2->integer);
++  if ($2->integer>=1000) olsr_cnf->olsrport = $2->integer;
++  else olsr_cnf->olsrport = DEF_OLSRPORT;
++  free($2);
++}
++;
++
+ arttable: TOK_RTTABLE TOK_INTEGER
+ {
+   PARSER_DEBUG_PRINTF("RtTable: %d\n", $2->integer);
+@@ -881,6 +915,14 @@
+ }
+ ;
+ 
++artproto: TOK_RTPROTO TOK_INTEGER
++{
++  PARSER_DEBUG_PRINTF("RtProto: %d\n", $2->integer);
++  olsr_cnf->rtproto = $2->integer;
++  free($2);
++}
++;
++
+ arttable_default: TOK_RTTABLE_DEFAULT TOK_INTEGER
+ {
+   PARSER_DEBUG_PRINTF("RtTableDefault: %d\n", $2->integer);
+@@ -892,7 +934,7 @@
  awillingness: TOK_WILLINGNESS TOK_INTEGER
  {
    PARSER_DEBUG_PRINTF("Willingness: %d\n", $2->integer);
@@ -8079,9 +8345,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oparse.y
    olsr_cnf->willingness = $2->integer;
    free($2);
  }
-diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oscan.lex
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/cfgparser/oscan.lex
 --- a/src/cfgparser/oscan.lex	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/cfgparser/oscan.lex	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/cfgparser/oscan.lex	Mon Mar 16 19:04:32 2009 +0100
 @@ -73,7 +73,7 @@
  static struct conf_token *get_string_token(const char * const s, const size_t n);
  static struct conf_token *get_integer_token(const char * const s);
@@ -8127,9 +8393,43 @@ diff -r feb3d7883ff0 -r d73e73400732 src/cfgparser/oscan.lex
      return TOK_IP6TYPE;
  }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/common/avl.h
+@@ -308,11 +308,22 @@
+     return TOK_TOS;
+ }
+ 
++
++"OlsrPort" {
++  yylval = NULL;
++  return TOK_OLSRPORT;
++}
++
+ "RtTable" {
+   yylval = NULL;
+   return TOK_RTTABLE;
+ }
+ 
++"RtProto" {
++  yylval = NULL;
++  return TOK_RTPROTO;
++}
++
+ "RtTableDefault" {
+   yylval = NULL;
+   return TOK_RTTABLE_DEFAULT;
+@@ -423,6 +434,10 @@
+     yylval = NULL;
+     return TOK_IP4BROADCAST;
+ }
++"Mode" {
++    yylval = NULL;
++    return TOK_IFMODE;
++}
+ "Ip6AddrType" {
+     yylval = NULL;
+     return TOK_IP6ADDRTYPE;
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/common/avl.h
 --- a/src/common/avl.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/common/avl.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/common/avl.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -136,7 +136,7 @@
  {\
    return( \
@@ -8139,9 +8439,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/common/avl.h
        NULL); \
  }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/common/list.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/common/list.h
 --- a/src/common/list.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/common/list.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/common/list.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -85,7 +85,7 @@
  {\
    return( \
@@ -8151,9 +8451,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/common/list.h
        NULL); \
  }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/defs.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/defs.h
 --- a/src/defs.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/defs.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/defs.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -70,7 +70,7 @@
  #define UDP_IPV4_HDRSIZE        28
  #define UDP_IPV6_HDRSIZE        62
@@ -8183,9 +8483,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/defs.h
  
  /*
   *IPC functions
-diff -r feb3d7883ff0 -r d73e73400732 src/duplicate_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/duplicate_set.c
 --- a/src/duplicate_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/duplicate_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/duplicate_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -62,7 +62,7 @@
  }
  
@@ -8253,9 +8553,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/duplicate_set.c
  }
  
  void
-diff -r feb3d7883ff0 -r d73e73400732 src/duplicate_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/duplicate_set.h
 --- a/src/duplicate_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/duplicate_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/duplicate_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -54,16 +54,16 @@
  struct dup_entry {
    struct avl_node avl;
@@ -8277,9 +8577,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/duplicate_set.h
  int olsr_message_is_duplicate(union olsr_message *m);
  void olsr_print_duplicate_table(void);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/generate_msg.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/generate_msg.c
 --- a/src/generate_msg.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/generate_msg.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/generate_msg.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -61,7 +61,7 @@
  static char pulsedata[] = { '\\', '|', '/', '-' };
  
@@ -8289,9 +8589,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/generate_msg.c
  
  void
  generate_hello(void *p)
-diff -r feb3d7883ff0 -r d73e73400732 src/hashing.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hashing.c
 --- a/src/hashing.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hashing.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hashing.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -64,14 +64,14 @@
    c -= a; c -= b; c ^= (b>>15); \
  }
@@ -8381,9 +8681,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hashing.c
      break;
    default:
      hash = 0;
-diff -r feb3d7883ff0 -r d73e73400732 src/hashing.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hashing.h
 --- a/src/hashing.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hashing.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hashing.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -47,7 +47,7 @@
  
  #include "olsr_types.h"
@@ -8393,9 +8693,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hashing.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/hna_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hna_set.c
 --- a/src/hna_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hna_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hna_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -85,7 +85,7 @@
   * @return the localized entry or NULL of not found
   */
@@ -8536,9 +8836,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hna_set.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/hna_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hna_set.h
 --- a/src/hna_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hna_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hna_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -53,7 +53,7 @@
  
  struct hna_net {
@@ -8572,9 +8872,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hna_set.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/hysteresis.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hysteresis.c
 --- a/src/hysteresis.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hysteresis.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hysteresis.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -73,14 +73,14 @@
      if (entry->L_link_pending == 1) {
        struct ipaddr_str buf;
@@ -8627,9 +8927,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hysteresis.c
  
      //printf("Updating seqno to: %d\n", lnk->olsr_seqno);
    }
-diff -r feb3d7883ff0 -r d73e73400732 src/hysteresis.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/hysteresis.h
 --- a/src/hysteresis.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/hysteresis.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/hysteresis.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -52,7 +52,7 @@
  
  void olsr_update_hysteresis_hello(struct link_entry *, olsr_reltime);
@@ -8639,9 +8939,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/hysteresis.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/interfaces.c
 --- a/src/interfaces.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/interfaces.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/interfaces.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -268,7 +268,7 @@
    interf_n->interf = NULL;
    interf_n->configured = 0;
@@ -8651,12 +8951,16 @@ diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.c
  
    strscpy(interf_n->name, name, name_size);
    interf_n->next = olsr_cnf->interfaces;
-diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/interfaces.h
 --- a/src/interfaces.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/interfaces.h	Fri Mar 13 19:16:23 2009 +0100
-@@ -92,22 +92,22 @@
++++ b/src/interfaces.h	Mon Mar 16 19:04:32 2009 +0100
+@@ -91,23 +91,26 @@
+ #define WEIGHT_HIGH             4096    /* High                 */
  #define WEIGHT_HIGHEST          8192    /* Really high          */
  
++#define IF_MODE_MESH   	0
++#define IF_MODE_ETHER   1
++
  struct if_gen_property {
 -  olsr_u32_t owner_id;
 +  uint32_t owner_id;
@@ -8683,7 +8987,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.h
    int bufsize;                         /* Size of the buffer */
    int maxsize;                         /* Max bytes of payload that can be added to the buffer */
    int pending;                         /* How much data is currently pending in the buffer */
-@@ -138,7 +138,7 @@
+@@ -123,6 +126,7 @@
+   struct sockaddr_in int_addr;         /* address */
+   struct sockaddr_in int_netmask;      /* netmask */
+   struct sockaddr_in int_broadaddr;    /* broadcast address */
++  int mode;                            /* interface mode */
+   /* IP version 6 */
+   struct sockaddr_in6 int6_addr;       /* Address */
+   struct sockaddr_in6 int6_multaddr;   /* Multicast */
+@@ -138,7 +142,7 @@
    int if_index;                        /* Kernels index of this interface */
    int is_wireless;                     /* wireless interface or not */
    char *int_name;                      /* from kernel if structure */
@@ -8692,7 +9004,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.h
  
    /* Periodic message generation timers */
    struct timer_entry *hello_gen_timer;
-@@ -166,7 +166,7 @@
+@@ -166,7 +170,7 @@
  
    int ttl_index;                       /* index in TTL array for fish-eye */
  
@@ -8701,9 +9013,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/interfaces.h
  
    struct interface *int_next;
  };
-diff -r feb3d7883ff0 -r d73e73400732 src/ipc_frontend.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/ipc_frontend.c
 --- a/src/ipc_frontend.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/ipc_frontend.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/ipc_frontend.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -67,7 +67,7 @@
  
  static int ipc_sock = -1;
@@ -8823,9 +9135,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/ipc_frontend.c
  
    net_msg->ipv6 = olsr_cnf->ip_version == AF_INET ? 0 : 1;
  
-diff -r feb3d7883ff0 -r d73e73400732 src/ipc_frontend.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/ipc_frontend.h
 --- a/src/ipc_frontend.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/ipc_frontend.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/ipc_frontend.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -70,35 +70,35 @@
   */
  
@@ -8879,9 +9191,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/ipc_frontend.h
  
  int ipc_route_send_rtentry(const union olsr_ip_addr *, const union olsr_ip_addr *, int, int, const char *);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/ipcalc.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/ipcalc.c
 --- a/src/ipcalc.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/ipcalc.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/ipcalc.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -42,14 +42,14 @@
  #include "ipcalc.h"
  
@@ -8919,7 +9231,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/ipcalc.c
    for (a = adr; a < a_end && *a == 0xff; a++) {
      prefix += 8;
    }
-@@ -157,18 +157,18 @@
+@@ -112,7 +112,6 @@
+     default:
+       OLSR_PRINTF(0, "%s: Got bogus netmask %s\n", __func__, olsr_ip_to_string(&buf, (const union olsr_ip_addr *)adr));
+       prefix = UCHAR_MAX;
+-      *(int *)0 = 0;
+       break;
+     }
+   }
+@@ -157,18 +156,18 @@
  {
    int rv;
    if (olsr_cnf->ip_version == AF_INET) {
@@ -8943,9 +9263,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/ipcalc.c
        }
        i++;
        n++;
-diff -r feb3d7883ff0 -r d73e73400732 src/ipcalc.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/ipcalc.h
 --- a/src/ipcalc.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/ipcalc.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/ipcalc.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -101,31 +101,31 @@
  
  int ip_in_net(const union olsr_ip_addr *ipaddr, const struct olsr_ip_prefix *net);
@@ -8998,9 +9318,23 @@ diff -r feb3d7883ff0 -r d73e73400732 src/ipcalc.h
  {
    return prefixlen == 0 ? 0 : (~0U << (32 - prefixlen));
  }
-diff -r feb3d7883ff0 -r d73e73400732 src/link_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/kernel_routes.h
+--- a/src/kernel_routes.h	Tue Dec 02 11:42:51 2008 +0100
++++ b/src/kernel_routes.h	Mon Mar 16 19:04:32 2009 +0100
+@@ -53,6 +53,10 @@
+ 
+ int olsr_ioctl_del_route6(const struct rt_entry *);
+ 
++#if LINUX_POLICY_ROUTING
++int olsr_netlink_rule(uint8_t, uint8_t, uint16_t);
++#endif
++
+ #endif
+ 
+ /*
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/link_set.c
 --- a/src/link_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/link_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/link_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -59,10 +59,10 @@
  /* head node for all link sets */
  struct list_node link_entry_head;
@@ -9084,7 +9418,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/link_set.c
  {
 +  struct ipaddr_str buf;
 +
-+  fprintf(stderr, "reset link timer: %s = %u\n",
++  OLSR_PRINTF(3, "reset link timer: %s = %u\n",
 +    olsr_ip_to_string(&buf, &link->neighbor_iface_addr),
 +    (unsigned int)(olsr_times() + rel_timer/1000));
    olsr_set_timer(&link->link_timer, rel_timer, OLSR_LINK_JITTER, OLSR_TIMER_ONESHOT, &olsr_expire_link_entry, link, 0);
@@ -9117,9 +9451,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/link_set.c
  
    /* timeout for the first lost packet is 1.5 x htime */
    olsr_set_timer(&entry->link_loss_timer, entry->loss_helloint + entry->loss_helloint / 2, OLSR_LINK_LOSS_JITTER,
-diff -r feb3d7883ff0 -r d73e73400732 src/link_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/link_set.h
 --- a/src/link_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/link_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/link_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -65,7 +65,7 @@
    clock_t ASYM_time;
    olsr_reltime vtime;
@@ -9176,9 +9510,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/link_set.h
  
  struct link_entry *get_best_link_to_neighbor(const union olsr_ip_addr *);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/linux/kernel_routes.c
 --- a/src/linux/kernel_routes.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/linux/kernel_routes.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/linux/kernel_routes.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -42,9 +42,18 @@
  
  #include "kernel_routes.h"
@@ -9220,73 +9554,89 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
    struct olsr_rtreq req;
    struct iovec iov;
    struct sockaddr_nl nladdr;
-@@ -87,9 +104,10 @@
+@@ -87,10 +104,12 @@
      0,
      0
    };
 -  olsr_u32_t metric =
 -    FIBM_FLAT != olsr_cnf->fib_metric ? (RTM_NEWROUTE ==
 -                                         cmd ? rt->rt_best->rtp_metric.hops : rt->rt_metric.hops) : RT_METRIC_DEFAULT;
-+  uint32_t metric =
+-  const struct rt_nexthop *nexthop = (RTM_NEWROUTE == cmd) ? &rt->rt_best->rtp_nexthop : &rt->rt_nexthop;
++  uint32_t metric = ((cmd != RTM_NEWRULE) | (cmd != RTM_DELRULE)) ?
 +    FIBM_FLAT != olsr_cnf->fib_metric ? 
 +      ((RTM_NEWROUTE == cmd) ? rt->rt_best->rtp_metric.hops : rt->rt_metric.hops) 
-+      : RT_METRIC_DEFAULT;
-   const struct rt_nexthop *nexthop = (RTM_NEWROUTE == cmd) ? &rt->rt_best->rtp_nexthop : &rt->rt_nexthop;
++      : RT_METRIC_DEFAULT
++      : 0;
++  const struct rt_nexthop *nexthop = ((cmd != RTM_NEWRULE) | (cmd != RTM_DELRULE)) ? (RTM_NEWROUTE == cmd) ? &rt->rt_best->rtp_nexthop : &rt->rt_nexthop : NULL;
  
    memset(&req, 0, sizeof(req));
-@@ -98,28 +116,50 @@
+   req.n.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
+@@ -98,28 +117,56 @@
    req.n.nlmsg_type = cmd;
    req.r.rtm_family = family;
    req.r.rtm_table = rttable;
 -  req.r.rtm_protocol = RTPROT_BOOT;
 -  req.r.rtm_scope = RT_SCOPE_LINK;
 -  req.r.rtm_type = RTN_UNICAST;
-   req.r.rtm_dst_len = rt->rt_dst.prefix_len;
-+  req.r.rtm_type = RTN_UNICAST; /*different rtm_type will not conflict, but of course if there a blackhole routes they will do what they do,..*/
+-  req.r.rtm_dst_len = rt->rt_dst.prefix_len;
++  req.r.rtm_type = RTN_UNICAST;//RTN_UNSPEC /*different rtm_type will not conflict, but of course if there a blackhole routes they will do what they do,..*/
 +  req.r.rtm_protocol = RTPROT_UNSPEC;//wildcard to delete routes of all protos if no simlar-delete correct proto will get set below
 +  req.r.rtm_scope = RT_SCOPE_NOWHERE;//as wildcard for deletion
  
-+  /*do not specify much if we wanna delete similar routes*/
-+  /*this currently works for different interfaces, src-ips metrics, gateways, protos*/
-+  if ((flag != RT_DELETE_SIMILAR_ROUTE) & (flag != RT_DELETE_SIMILAR_AUTO_ROUTE)) {
-+    req.r.rtm_protocol = RTPROT_BOOT;
-+    req.r.rtm_scope = RT_SCOPE_LINK;
-+
-+    /*metric*/
-+    if (FIBM_APPROX != olsr_cnf->fib_metric || (RTM_NEWROUTE == cmd) ) {
-+      olsr_netlink_addreq(&req, RTA_PRIORITY, &metric, sizeof(metric));
-+    }
-+
-+    /*interface*/
-+    olsr_netlink_addreq(&req, RTA_OIF, &nexthop->iif_index, sizeof(nexthop->iif_index));
-+  }
-+
-+  //make sure that netmask = /32 as this is an autogenarated route
-+  if (( flag == RT_AUTO_ADD_GATEWAY_ROUTE ) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) req.r.rtm_dst_len = 32;
-+
-+  /* for ipv4 or ipv6 we add gateway if one is specified, 
-+  * or leave gateway away if we want to delete similar routes aswell, 
-+  * or even use the gateway as target if we add a autogenrated route (or do an delete_sim to make insertion of autogen route possible)*/
-   if (AF_INET == family) {
+-  if (AF_INET == family) {
 -    if (rt->rt_dst.prefix.v4.s_addr != nexthop->gateway.v4.s_addr) {
-+    if ( ( flag != RT_AUTO_ADD_GATEWAY_ROUTE ) & (flag != RT_DELETE_SIMILAR_ROUTE) & 
-+         ( flag != RT_DELETE_SIMILAR_AUTO_ROUTE) & (rt->rt_dst.prefix.v4.s_addr != nexthop->gateway.v4.s_addr) ) {
-       olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v4, sizeof(nexthop->gateway.v4));
-       req.r.rtm_scope = RT_SCOPE_UNIVERSE;
+-      olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v4, sizeof(nexthop->gateway.v4));
+-      req.r.rtm_scope = RT_SCOPE_UNIVERSE;
++  if (( cmd != RTM_NEWRULE ) & ( cmd != RTM_DELRULE ) ) {
++    req.r.rtm_dst_len = rt->rt_dst.prefix_len;
++
++    /*do not specify much if we wanna delete similar routes*/
++    /*this currently works for different interfaces, src-ips metrics, gateways, protos*/
++    if ((flag != RT_DELETE_SIMILAR_ROUTE) & (flag != RT_DELETE_SIMILAR_AUTO_ROUTE)) {
++      req.r.rtm_protocol = ((olsr_cnf->rtproto<1)?RTPROT_BOOT:((olsr_cnf->rtproto==1)?0:olsr_cnf->rtproto));
++      req.r.rtm_scope = RT_SCOPE_LINK;
++      /*add interface*/
++      olsr_netlink_addreq(&req, RTA_OIF, &nexthop->iif_index, sizeof(nexthop->iif_index));
      }
 -    olsr_netlink_addreq(&req, RTA_DST, &rt->rt_dst.prefix.v4, sizeof(rt->rt_dst.prefix.v4));
-+    olsr_netlink_addreq(&req, RTA_DST, ( (flag == RT_AUTO_ADD_GATEWAY_ROUTE) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) ? 
-+                                      &nexthop->gateway.v4 : &rt->rt_dst.prefix.v4, sizeof(rt->rt_dst.prefix.v4));
-   } else {
+-  } else {
 -    if (0 != memcmp(&rt->rt_dst.prefix.v6, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6))) {
-+    if ( ( flag != RT_AUTO_ADD_GATEWAY_ROUTE ) & (flag != RT_DELETE_SIMILAR_ROUTE ) & 
-+         ( flag != RT_DELETE_SIMILAR_AUTO_ROUTE) & (0 != memcmp(&rt->rt_dst.prefix.v6, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6))) ) {
-       olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6));
-       req.r.rtm_scope = RT_SCOPE_UNIVERSE;
+-      olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6));
+-      req.r.rtm_scope = RT_SCOPE_UNIVERSE;
++
++    /*metric is specified always as we can only delete one route per iteration, and wanna hit the correct one first*/
++    if (FIBM_APPROX != olsr_cnf->fib_metric || (RTM_NEWROUTE == cmd) ) {
++      olsr_netlink_addreq(&req, RTA_PRIORITY, &metric, sizeof(metric));
      }
 -    olsr_netlink_addreq(&req, RTA_DST, &rt->rt_dst.prefix.v6, sizeof(rt->rt_dst.prefix.v6));
-+    olsr_netlink_addreq(&req, RTA_DST, ( (flag == RT_AUTO_ADD_GATEWAY_ROUTE) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) ? 
-+                                      &nexthop->gateway.v6 : &rt->rt_dst.prefix.v6, sizeof(rt->rt_dst.prefix.v6));
++
++    //make sure that netmask = /32 as this is an autogenarated route
++    if (( flag == RT_AUTO_ADD_GATEWAY_ROUTE ) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) req.r.rtm_dst_len = 32;
++
++    /* for ipv4 or ipv6 we add gateway if one is specified, 
++    * or leave gateway away if we want to delete similar routes aswell, 
++    * or even use the gateway as target if we add a autogenrated route (or do an delete_sim to make insertion of autogen route possible)*/
++    if (AF_INET == family) {
++      if ( ( flag != RT_AUTO_ADD_GATEWAY_ROUTE ) & (flag != RT_DELETE_SIMILAR_ROUTE) & 
++           ( flag != RT_DELETE_SIMILAR_AUTO_ROUTE) & (rt->rt_dst.prefix.v4.s_addr != nexthop->gateway.v4.s_addr) ) {
++        olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v4, sizeof(nexthop->gateway.v4));
++        req.r.rtm_scope = RT_SCOPE_UNIVERSE;
++      }
++      olsr_netlink_addreq(&req, RTA_DST, ( (flag == RT_AUTO_ADD_GATEWAY_ROUTE) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) ? 
++                          &nexthop->gateway.v4 : &rt->rt_dst.prefix.v4, sizeof(rt->rt_dst.prefix.v4));
++    } else {
++      if ( ( flag != RT_AUTO_ADD_GATEWAY_ROUTE ) & (flag != RT_DELETE_SIMILAR_ROUTE ) & 
++           ( flag != RT_DELETE_SIMILAR_AUTO_ROUTE) & (0 != memcmp(&rt->rt_dst.prefix.v6, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6))) ) {
++        olsr_netlink_addreq(&req, RTA_GATEWAY, &nexthop->gateway.v6, sizeof(nexthop->gateway.v6));
++        req.r.rtm_scope = RT_SCOPE_UNIVERSE;
++      }
++      olsr_netlink_addreq(&req, RTA_DST, ( (flag == RT_AUTO_ADD_GATEWAY_ROUTE) | (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) ) ? 
++                        &nexthop->gateway.v6 : &rt->rt_dst.prefix.v6, sizeof(rt->rt_dst.prefix.v6));
++    }
++  } else {//add or delete a rule
++    static uint32_t priority = 65535;
++    req.r.rtm_scope = RT_SCOPE_UNIVERSE;
++    olsr_netlink_addreq(&req, RTA_PRIORITY, &priority, sizeof(priority));
    }
 -  if (FIBM_APPROX != olsr_cnf->fib_metric || RTM_NEWROUTE == cmd) {
 -    olsr_netlink_addreq(&req, RTA_PRIORITY, &metric, sizeof(metric));
@@ -9296,7 +9646,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
    iov.iov_base = &req.n;
    iov.iov_len = req.n.nlmsg_len;
    memset(&nladdr, 0, sizeof(nladdr));
-@@ -130,27 +170,128 @@
+@@ -130,27 +177,146 @@
      if (0 < (ret = recvmsg(olsr_cnf->rtnl_s, &msg, 0))) {
        struct nlmsghdr *h = (struct nlmsghdr *)req.buf;
        while (NLMSG_OK(h, (unsigned int)ret)) {
@@ -9319,27 +9669,36 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
 +              struct ipaddr_str buf;
 +              rt_ret = -1;
 +              /*debug output for original and retry attempts*/
-+              if ( flag <= RT_RETRY_AFTER_DELETE_SIMILAR ) {
-+                if (rt->rt_dst.prefix.v4.s_addr!=nexthop->gateway.v4.s_addr)
-+                  olsr_syslog(OLSR_LOG_ERR, "error %d %s %s route to %s/%d via %s dev %d", errno, err_msg, (cmd == RTM_NEWROUTE) ? "add" : "del",
-+                             olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix),
-+                             req.r.rtm_dst_len,
-+                             olsr_ip_to_string(&gbuf,&nexthop->gateway), nexthop->iif_index); 
-+                else olsr_syslog(OLSR_LOG_ERR, "error %d %s %s route to %s/%d dev %d", errno, err_msg, (cmd == RTM_NEWROUTE) ? "add" : "del",
-+                                olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix),
-+                                req.r.rtm_dst_len, nexthop->iif_index);
++              if ( cmd == RTM_NEWRULE ) {
++                olsr_syslog(OLSR_LOG_ERR,"Error '%s' (%d) on inserting empty policy rule aimed to activate RtTable %u!", err_msg, errno, rttable);
 +              }
-+	      //deug output for autogen routes
-+              else if (flag == RT_AUTO_ADD_GATEWAY_ROUTE) olsr_syslog(OLSR_LOG_ERR, ". error %d %s auto-add route to %s dev %d", errno, err_msg,
-+                               olsr_ip_to_string(&ibuf,&nexthop->gateway), nexthop->iif_index);
++              else if ( cmd == RTM_DELRULE ) {
++                olsr_syslog(OLSR_LOG_ERR,"Error '%s' (%d) on deleting empty policy rule aimed to activate rtTable %u!", err_msg, errno, rttable);
++              }
++              else if ( flag <= RT_RETRY_AFTER_DELETE_SIMILAR ) {
++                if (rt->rt_dst.prefix.v4.s_addr!=nexthop->gateway.v4.s_addr)
++                  olsr_syslog(OLSR_LOG_ERR, "error '%s' (%d) %s route to %s/%d via %s dev %s", err_msg, errno, (cmd == RTM_NEWROUTE) ? "add" : "del",
++                              olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix),
++                              req.r.rtm_dst_len,
++                              olsr_ip_to_string(&gbuf,&nexthop->gateway), if_ifwithindex_name(nexthop->iif_index));
++                else olsr_syslog(OLSR_LOG_ERR, "error '%s' (%d) %s route to %s/%d dev %s", err_msg, errno, (cmd == RTM_NEWROUTE) ? "add" : "del",
++                                 olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix),
++                                 req.r.rtm_dst_len, if_ifwithindex_name(nexthop->iif_index));
++              }
++              //deug output for autogen routes
++              else if (flag == RT_AUTO_ADD_GATEWAY_ROUTE) 
++                       olsr_syslog(OLSR_LOG_ERR, ". error '%s' (%d) auto-add route to %s dev %s", err_msg, errno,
++                                   olsr_ip_to_string(&ibuf,&nexthop->gateway), if_ifwithindex_name(nexthop->iif_index));
 +              //debug output for auto-delete similar
-+              else if (flag == RT_DELETE_SIMILAR_ROUTE) olsr_syslog(OLSR_LOG_ERR, ". error %d %s auto-delete route to %s", errno, err_msg,
-+                                             olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix));
++              else if (flag == RT_DELETE_SIMILAR_ROUTE) 
++                       olsr_syslog(OLSR_LOG_ERR, ". error '%s' (%d) auto-delete route to %s dev %s", err_msg, errno,
++                                   olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix), if_ifwithindex_name(nexthop->iif_index));
 +              //debug output for auto-delete similar
-+              else if (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) olsr_syslog(OLSR_LOG_ERR, ". . error %d %s auto-del-similar route to %s", errno, err_msg,
-+                                                             olsr_ip_to_string(&ibuf,&rt->rt_dst.prefix));
-+	      //should never happen
-+	      else {
++              else if (flag == RT_DELETE_SIMILAR_AUTO_ROUTE) 
++                       olsr_syslog(OLSR_LOG_ERR, ". . error '%s' (%d) auto-delete similar route to %s dev %s", err_msg, errno,
++                                   olsr_ip_to_string(&ibuf,&nexthop->gateway), if_ifwithindex_name(nexthop->iif_index));
++              //should never happen
++              else {
 +                olsr_syslog(OLSR_LOG_ERR, "# invalid internal route delete/add flag (%d) used!", flag);
 +              }
 +            }
@@ -9353,23 +9712,25 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
 +            /* resolve "File exist" (17) propblems (on orig and autogen routes)*/	
 +	    if ((errno == 17) & ((flag == RT_ORIG_REQUEST) | (flag == RT_AUTO_ADD_GATEWAY_ROUTE)) & (cmd == RTM_NEWROUTE)) {
 +              /*a simlar route going over another gateway may be present, which should be deleted*/
-+              olsr_syslog(OLSR_LOG_ERR, ". auto-deleting similar routes to resolve '17 - File exists' while adding route!");
++              olsr_syslog(OLSR_LOG_ERR, ". auto-deleting similar routes to resolve 'File exists' (17) while adding route!");
 +              rt_ret = RT_DELETE_SIMILAR_ROUTE;/*processing will contiune after this loop is finished as otherwise the rtnetlink is still blocked*/
 +            }
 +            /* report success on "No such process" (3) */
 +            else if ((errno == 3) & (cmd == RTM_DELROUTE) & (flag == RT_ORIG_REQUEST)) {
 +              /*another similar (but different) route may be present, but as we don not have a better route, nothing to think about*/
-+              olsr_syslog(OLSR_LOG_ERR, ". ignoring '3 - No such process' while deleting route!");
++              olsr_syslog(OLSR_LOG_ERR, ". ignoring 'No such process' (3) while deleting route!");
 +              rt_ret = 0;
 +            }
-+            /* insert route to gateway on the fly if "Network unreachable" (128) 
-+             * is issued by rtnetlink when adding route via gateway!
++            /* insert route to gateway on the fly if "Network unreachable" (128) on 2.4 kernels
++             * or on 2.6 kernel No such process (3) is reported in rtneltink response
 +             * do this only with flat metric, as using metric values inherited from 
 +             * a target behind the gateway is really strange, and could lead to multiple routes!
-+             * anyways if invalid gateways ips may happen we are f*cked up!!
-+             * but if not, these on the fly generated routes are no problem*/
-+            else if ((errno == 128) & (flag == RT_ORIG_REQUEST) & (FIBM_FLAT == olsr_cnf->fib_metric) & (cmd == RTM_NEWROUTE) & (rt->rt_dst.prefix.v4.s_addr!=nexthop->gateway.v4.s_addr)) {
-+              olsr_syslog(OLSR_LOG_ERR, ". autogenerating route to handle '128 - Network unreachable' while adding route!");
++             * anyways if invalid gateway ips may happen we are f*cked up!!
++             * but if not, these on the fly generated routes are no problem, and will only get used when needed*/
++            else if ( ((errno == 3)|(errno == 128)) & (flag == RT_ORIG_REQUEST) & (FIBM_FLAT == olsr_cnf->fib_metric) 
++                      & (cmd == RTM_NEWROUTE) & (rt->rt_dst.prefix.v4.s_addr!=nexthop->gateway.v4.s_addr)) {
++              if (errno == 128) olsr_syslog(OLSR_LOG_ERR, ". autogenerating route to handle 'Network unreachable' (128) while adding route!");
++              else olsr_syslog(OLSR_LOG_ERR, ". autogenerating route to handle 'No such process' (3) while adding route!");
 +              rt_ret = RT_AUTO_ADD_GATEWAY_ROUTE;/*processing will contiune after this loop is finished as otherwise the rtnetlink is still blocked*/
 +            }
            }
@@ -9414,16 +9775,23 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
 +    else rt_ret = -1;//unrecoverable error
 +  }
 +  //send ipc update on success
-+  if ((flag = RT_ORIG_REQUEST) & (0 <= rt_ret && olsr_cnf->ipc_connections > 0)) {
++  if ( ( cmd != RTM_NEWRULE ) & ( cmd != RTM_DELRULE ) & (flag = RT_ORIG_REQUEST) & (0 <= rt_ret && olsr_cnf->ipc_connections > 0)) {
 +    ipc_route_send_rtentry(&rt->rt_dst.prefix, &nexthop->gateway, metric, RTM_NEWROUTE == cmd,
 +                             if_ifwithindex_name(nexthop->iif_index));
 +  }
-+  if ((rt_ret < 0 ) & (flag == RT_ORIG_REQUEST)) olsr_syslog(OLSR_LOG_INFO,"_returning %i", rt_ret);
-+  if (rt_ret == -2) olsr_syslog(OLSR_LOG_ERR,"no rtnetlink response was received! (everything may happen now ...)");
++  if (rt_ret == -2) olsr_syslog(OLSR_LOG_ERR,"no rtnetlink response was received! (no more system ressources?, everything may happen now ...)");
 +  return rt_ret;
  }
 +
-+/*external wrapper function for above patched function*/
++/*external wrapper function for above patched multi purpose rtnetlink function*/
++int
++olsr_netlink_rule(uint8_t family, uint8_t rttable, uint16_t cmd)
++{
++  struct rt_entry rt;
++  return olsr_netlink_route_int(&rt, family, rttable, cmd, RT_ORIG_REQUEST);
++}
++
++/*internal wrapper function for above patched function*/
 +static int
 +olsr_netlink_route(const struct rt_entry *rt, uint8_t family, uint8_t rttable, __u16 cmd)
 +{
@@ -9433,7 +9801,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
  #endif /* LINUX_POLICY_ROUTING */
  
  /**
-@@ -200,7 +341,7 @@
+@@ -200,7 +366,7 @@
    /* delete existing default route before ? */
    if ((olsr_cnf->del_gws) && (rt->rt_dst.prefix.v4.s_addr == INADDR_ANY) && (rt->rt_dst.prefix_len == INADDR_ANY)) {
      delete_all_inet_gws();
@@ -9442,9 +9810,27 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/kernel_routes.c
    }
  
    if ((rslt = ioctl(olsr_cnf->ioctl_s, SIOCADDRT, &kernel_route)) >= 0) {
-diff -r feb3d7883ff0 -r d73e73400732 src/linux/net.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/linux/net.c
 --- a/src/linux/net.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/linux/net.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/linux/net.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -430,7 +430,7 @@
+ 
+   memset(&sin, 0, sizeof(sin));
+   sin.sin_family = AF_INET;
+-  sin.sin_port = htons(OLSRPORT);
++  sin.sin_port = htons(olsr_cnf->olsrport);
+   sin.sin_addr.s_addr = INADDR_ANY;
+   if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+     perror("bind");
+@@ -518,7 +518,7 @@
+ 
+   memset(&sin, 0, sizeof(sin));
+   sin.sin6_family = AF_INET6;
+-  sin.sin6_port = htons(OLSRPORT);
++  sin.sin6_port = htons(olsr_cnf->olsrport);
+   //(addrsock6.sin6_addr).s_addr = IN6ADDR_ANY_INIT;
+   if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+     perror("bind");
 @@ -753,12 +753,12 @@
    }
  }
@@ -9460,9 +9846,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/linux/net.c
    } else {
      /* Mii wizardry */
      struct ifreq ifr;
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_mpr.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_mpr.c
 --- a/src/lq_mpr.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_mpr.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_mpr.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -55,7 +55,7 @@
    int i, k;
    struct neighbor_entry *neigh;
@@ -9527,9 +9913,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_mpr.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_packet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_packet.c
 --- a/src/lq_packet.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_packet.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_packet.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -59,7 +59,7 @@
  #include "net_olsr.h"
  #include "lq_plugin.h"
@@ -9629,9 +10015,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_packet.c
  
    // leave space for the OLSR header
  
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_packet.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_packet.h
 --- a/src/lq_packet.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_packet.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_packet.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -53,232 +53,232 @@
  /* deserialized OLSR header */
  
@@ -9964,9 +10350,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_packet.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin.c
 --- a/src/lq_plugin.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -99,7 +99,7 @@
    node->node.key = node->name;
    node->handler = handler;
@@ -10044,9 +10430,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin.c
  {
    static const char *infinite = "INFINITE";
  
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin.h
 --- a/src/lq_plugin.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -69,9 +69,9 @@
      olsr_linkcost(*calc_hello_cost) (const void *lq);
      olsr_linkcost(*calc_tc_cost) (const void *lq);
@@ -10095,10 +10481,18 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin.h
  
  void olsr_copy_hello_lq(struct lq_hello_neighbor *target, struct link_entry *source);
  void olsr_copylq_link_entry_2_tc_mpr_addr(struct tc_mpr_addr *target, struct link_entry *source);
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_ff.c
 --- a/src/lq_plugin_default_ff.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_ff.c	Fri Mar 13 19:16:23 2009 +0100
-@@ -85,7 +85,7 @@
++++ b/src/lq_plugin_default_ff.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -51,6 +51,7 @@
+ #include "fpm.h"
+ #include "mid_set.h"
+ #include "scheduler.h"
++#include "log.h"
+ 
+ /* etx lq plugin (freifunk fpm version) settings */
+ struct lq_handler lq_etx_ff_handler = {
+@@ -85,7 +86,7 @@
    const union olsr_ip_addr *main_addr;
    struct link_entry *lnk;
    struct default_lq_ff_hello *lq;
@@ -10107,12 +10501,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  
    /* Find main address */
    main_addr = mid_lookup_main_addr(from_addr);
-@@ -98,8 +98,13 @@
+@@ -98,8 +99,16 @@
  
    lq = (struct default_lq_ff_hello *)lnk->linkquality;
  
 +  /* ignore double package */
 +  if (lq->last_seq_nr == olsr->olsr_seqno) {
++    struct ipaddr_str buf;
++    olsr_syslog(OLSR_LOG_INFO, "detected duplicate packet with seqnr %d from %s on %s (%d Bytes)",
++		olsr->olsr_seqno,olsr_ip_to_string(&buf, from_addr),in_if->int_name,ntohs(olsr->olsr_packlen));
 +    return;
 +  }
 +
@@ -10122,7 +10519,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
    } else {
      seq_diff = olsr->olsr_seqno - lq->last_seq_nr;
    }
-@@ -122,7 +127,7 @@
+@@ -122,7 +131,7 @@
    OLSR_FOR_ALL_LINK_ENTRIES(link) {
      struct default_lq_ff_hello *tlq = (struct default_lq_ff_hello *)link->linkquality;
      fpm ratio;
@@ -10131,7 +10528,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  
      received = 0;
      lost = 0;
-@@ -148,7 +153,7 @@
+@@ -148,7 +157,7 @@
        ratio = fpmidiv(ratio, (int)(received + lost));
        ratio = fpmmuli(ratio, 255);
  
@@ -10140,7 +10537,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
      }
      link->linkcost = default_lq_calc_cost_ff(tlq);
  
-@@ -199,7 +204,7 @@
+@@ -199,7 +208,7 @@
  }
  
  void
@@ -10149,7 +10546,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  {
    struct default_lq_ff *lq = ptr;
  
-@@ -208,7 +213,7 @@
+@@ -208,7 +217,7 @@
    pkt_ignore_u16(curr);
  }
  
@@ -10158,7 +10555,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  default_lq_is_relevant_costchange_ff(olsr_linkcost c1, olsr_linkcost c2)
  {
    if (c1 > c2) {
-@@ -231,7 +236,7 @@
+@@ -231,7 +240,7 @@
  }
  
  void
@@ -10167,7 +10564,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  {
    struct default_lq_ff *lq = ptr;
  
-@@ -243,7 +248,7 @@
+@@ -243,7 +252,7 @@
  olsr_linkcost
  default_lq_packet_loss_worker_ff(struct link_entry
                                   __attribute__ ((unused)) * link, void
@@ -10176,9 +10573,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.c
  {
    return link->linkcost;
  }
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_ff.h
 --- a/src/lq_plugin_default_ff.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_ff.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin_default_ff.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -54,30 +54,30 @@
  #define LQ_FF_QUICKSTART_INIT 4
  
@@ -10219,9 +10616,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_ff.h
  
  void default_lq_copy_link2tc_ff(void *target, void *source);
  void default_lq_clear_ff(void *target);
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_float.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_float.c
 --- a/src/lq_plugin_default_float.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_float.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin_default_float.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -115,10 +115,10 @@
  }
  
@@ -10266,9 +10663,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_float.c
  {
    struct default_lq_float *tlq = ptr;
    float alpha = olsr_cnf->lq_aging;
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_float.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_float.h
 --- a/src/lq_plugin_default_float.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_float.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin_default_float.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -51,22 +51,22 @@
  
  struct default_lq_float {
@@ -10297,9 +10694,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_float.h
  
  void default_lq_copy_link2tc_float(void *target, void *source);
  void default_lq_clear_float(void *target);
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_fpm.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_fpm.c
 --- a/src/lq_plugin_default_fpm.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_fpm.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin_default_fpm.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -76,16 +76,16 @@
    sizeof(struct default_lq_fpm)
  };
@@ -10381,9 +10778,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_fpm.c
  
      ratio = (alpha_new * link->loss_link_multiplier + LINK_LOSS_MULTIPLIER - 1) / LINK_LOSS_MULTIPLIER;
      value += ratio;
-diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_fpm.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/lq_plugin_default_fpm.h
 --- a/src/lq_plugin_default_fpm.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/lq_plugin_default_fpm.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/lq_plugin_default_fpm.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -55,24 +55,24 @@
  #define LQ_ALGORITHM_ETX_FPM_NAME "etx_fpm"
  
@@ -10416,10 +10813,18 @@ diff -r feb3d7883ff0 -r d73e73400732 src/lq_plugin_default_fpm.h
  
  void default_lq_copy_link2tc_fpm(void *target, void *source);
  void default_lq_clear_fpm(void *target);
-diff -r feb3d7883ff0 -r d73e73400732 src/main.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/main.c
 --- a/src/main.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/main.c	Fri Mar 13 19:16:23 2009 +0100
-@@ -69,8 +69,8 @@
++++ b/src/main.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -62,6 +62,7 @@
+ #include <linux/types.h>
+ #include <linux/rtnetlink.h>
+ #include <fcntl.h>
++#include "kernel_routes.h"
+ #endif
+ 
+ #ifdef WIN32
+@@ -69,8 +70,8 @@
  int __stdcall SignalHandler(unsigned long signal) __attribute__ ((noreturn));
  void ListInterfaces(void);
  void DisableIcmpRedirects(void);
@@ -10430,7 +10835,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  #else
  static void olsr_shutdown(int) __attribute__ ((noreturn));
  #endif
-@@ -109,12 +109,12 @@
+@@ -109,12 +110,12 @@
  #endif
  
    /* paranoia checks */
@@ -10449,7 +10854,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  
    debug_handle = stdout;
  #ifndef WIN32
-@@ -143,6 +143,18 @@
+@@ -143,6 +144,18 @@
  
    /* Grab initial timestamp */
    now_times = olsr_times();
@@ -10468,7 +10873,21 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  
    printf("\n *** %s ***\n Build date: %s on %s\n http://www.olsr.org\n\n", olsrd_version, build_date, build_host);
  
-@@ -374,7 +386,7 @@
+@@ -320,6 +333,13 @@
+   /* Initialize net */
+   init_net();
+ 
++#if LINUX_POLICY_ROUTING
++  /* Create rule for RtTable to resolve route insertion problems*/
++  if ( ( olsr_cnf->rttable < 253) & ( olsr_cnf->rttable > 0 ) ) {
++    olsr_netlink_rule(olsr_cnf->ip_version, olsr_cnf->rttable, RTM_NEWRULE);
++  }
++#endif
++
+   /* Initializing networkinterfaces */
+   if (!ifinit()) {
+     if (olsr_cnf->allow_no_interfaces) {
+@@ -374,7 +394,7 @@
    /* ctrl-C and friends */
  #ifdef WIN32
  #ifndef WINCE
@@ -10477,7 +10896,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  #endif
  #else
    signal(SIGHUP, olsr_reconfigure);
-@@ -387,7 +399,7 @@
+@@ -387,7 +407,7 @@
    signal(SIGPIPE, SIG_IGN);
  #endif
  
@@ -10486,7 +10905,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  
    /* Starting scheduler */
    olsr_scheduler();
-@@ -405,15 +417,32 @@
+@@ -405,15 +425,32 @@
  void
  olsr_reconfigure(int signal __attribute__ ((unused)))
  {
@@ -10526,7 +10945,19 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  }
  #endif
  
-@@ -585,7 +614,7 @@
+@@ -468,6 +505,11 @@
+   close(olsr_cnf->ioctl_s);
+ 
+ #if LINUX_POLICY_ROUTING
++  /* RtTable (linux only!!) */
++  if ( ( olsr_cnf->rttable < 253) & ( olsr_cnf->rttable > 0 ) ) {
++    olsr_netlink_rule(olsr_cnf->ip_version, olsr_cnf->rttable, RTM_DELRULE);
++  }
++
+   close(olsr_cnf->rtnl_s);
+ #endif
+ 
+@@ -585,7 +627,7 @@
          printf("Invalid broadcast address! %s\nSkipping it!\n", *argv);
          continue;
        }
@@ -10535,7 +10966,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
        continue;
      }
  
-@@ -662,12 +691,12 @@
+@@ -662,12 +704,12 @@
          olsr_exit(__func__, EXIT_FAILURE);
        }
        printf("Queuing if %s\n", *argv);
@@ -10550,7 +10981,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
        }
  
        continue;
-@@ -734,7 +763,7 @@
+@@ -734,7 +776,7 @@
       * Should we display the contents of packages beeing sent?
       */
      if (strcmp(*argv, "-dispin") == 0) {
@@ -10559,7 +10990,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
        continue;
      }
  
-@@ -742,7 +771,7 @@
+@@ -742,7 +784,7 @@
       * Should we display the contents of incoming packages?
       */
      if (strcmp(*argv, "-dispout") == 0) {
@@ -10568,7 +10999,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
        continue;
      }
  
-@@ -786,15 +815,15 @@
+@@ -786,15 +828,15 @@
        }
        /* Add hemu interface */
  
@@ -10587,7 +11018,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  
        continue;
      }
-@@ -803,12 +832,12 @@
+@@ -803,12 +845,12 @@
       * Delete possible default GWs
       */
      if (strcmp(*argv, "-delgw") == 0) {
@@ -10602,7 +11033,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
        continue;
      }
  
-@@ -818,18 +847,20 @@
+@@ -818,18 +860,20 @@
  }
  
  /*
@@ -10631,9 +11062,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/main.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/mantissa.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mantissa.c
 --- a/src/mantissa.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mantissa.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mantissa.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -55,10 +55,10 @@
   *
   *@return a 8-bit mantissa/exponent product
@@ -10661,9 +11092,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mantissa.c
  
    if (b >= 8) {
      return ((16 + a) << (b - 8)) * 1000;
-diff -r feb3d7883ff0 -r d73e73400732 src/mantissa.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mantissa.h
 --- a/src/mantissa.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mantissa.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mantissa.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -45,7 +45,7 @@
  #include "olsr_types.h"
  
@@ -10685,9 +11116,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mantissa.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/mid_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mid_set.c
 --- a/src/mid_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mid_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mid_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -128,7 +128,7 @@
  {
    struct mid_entry *tmp;
@@ -10809,9 +11240,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mid_set.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/mid_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mid_set.h
 --- a/src/mid_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mid_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mid_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -84,7 +84,7 @@
  void olsr_prune_aliases(const union olsr_ip_addr *, struct mid_alias *);
  int olsr_update_mid_table(const union olsr_ip_addr *, olsr_reltime);
@@ -10821,9 +11252,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mid_set.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/mpr.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mpr.c
 --- a/src/mpr.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mpr.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mpr.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -52,7 +52,7 @@
   * Prototypes for internal functions
   */
@@ -10971,9 +11402,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mpr.c
          }
        }
      } OLSR_FOR_ALL_NBR_ENTRIES_END(a_neighbor);
-diff -r feb3d7883ff0 -r d73e73400732 src/mpr_selector_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mpr_selector_set.c
 --- a/src/mpr_selector_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mpr_selector_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mpr_selector_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -46,7 +46,7 @@
  #include "scheduler.h"
  #include "net_olsr.h"
@@ -11023,9 +11454,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mpr_selector_set.c
      return 1;
    }
    olsr_set_mpr_sel_timer(mprs, vtime);
-diff -r feb3d7883ff0 -r d73e73400732 src/mpr_selector_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/mpr_selector_set.h
 --- a/src/mpr_selector_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/mpr_selector_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/mpr_selector_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -54,10 +54,10 @@
  #define OLSR_MPR_SEL_JITTER 5   /* percent */
  
@@ -11039,9 +11470,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/mpr_selector_set.h
  
  void increase_local_ansn(void);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/neighbor_table.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/neighbor_table.c
 --- a/src/neighbor_table.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/neighbor_table.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/neighbor_table.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -93,8 +93,8 @@
    free(nbr2_list);
  
@@ -11125,9 +11556,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/neighbor_table.c
      }
      /* else N_status is set to NOT_SYM */
      entry->status = NOT_SYM;
-diff -r feb3d7883ff0 -r d73e73400732 src/neighbor_table.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/neighbor_table.h
 --- a/src/neighbor_table.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/neighbor_table.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/neighbor_table.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -57,11 +57,11 @@
  
  struct neighbor_entry {
@@ -11145,9 +11576,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/neighbor_table.h
    int neighbor_2_nocov;
    int linkcount;
    struct neighbor_2_list_entry neighbor_2_list;
-diff -r feb3d7883ff0 -r d73e73400732 src/net_olsr.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/net_olsr.c
 --- a/src/net_olsr.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/net_olsr.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/net_olsr.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -52,7 +52,7 @@
  #include <assert.h>
  #include <limits.h>
@@ -11193,6 +11624,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/net_olsr.c
  {
    if ((ifp->netbuf.pending + size) > (ifp->netbuf.maxsize + ifp->netbuf.reserved))
      return 0;
+@@ -363,7 +363,7 @@
+     sin = &dst;
+ 
+     if (sin->sin_port == 0)
+-      sin->sin_port = htons(OLSRPORT);
++      sin->sin_port = htons(olsr_cnf->olsrport);
+   } else {
+     struct sockaddr_in6 dst6;
+     /* IP version 6 */
 @@ -416,7 +416,7 @@
     * link qualities for the links to our neighbours
     */
@@ -11226,9 +11666,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/net_olsr.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/net_olsr.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/net_olsr.h
 --- a/src/net_olsr.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/net_olsr.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/net_olsr.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -49,9 +49,9 @@
  #include <arpa/inet.h>
  #include <net/if.h>
@@ -11267,9 +11707,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/net_olsr.h
  
  void olsr_add_invalid_address(const union olsr_ip_addr *);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/net_os.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/net_os.h
 --- a/src/net_os.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/net_os.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/net_os.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -85,7 +85,7 @@
  
  int check_wireless_interface(char *);
@@ -11279,9 +11719,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/net_os.h
  
  int join_mcast(struct interface *, int);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr.c
 --- a/src/olsr.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -67,10 +67,10 @@
  #include <stdarg.h>
  #include <signal.h>
@@ -11358,7 +11798,34 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
  
    /* Set avl tree comparator */
    if (olsr_cnf->ipsize == 4) {
-@@ -412,7 +412,7 @@
+@@ -283,13 +283,14 @@
+  *@returns positive if forwarded
+  */
+ int
+-olsr_forward_message(union olsr_message *m, union olsr_ip_addr *from_addr)
++olsr_forward_message(union olsr_message *m, struct interface *in_if, union olsr_ip_addr *from_addr)
+ {
+   union olsr_ip_addr *src;
+   struct neighbor_entry *neighbor;
+   int msgsize;
+   struct interface *ifn;
+ 
++
+   /*
+    * Sven-Ola: We should not flood the mesh with overdue messages. Because
+    * of a bug in parser.c:parse_packet, we have a lot of messages because
+@@ -345,6 +346,10 @@
+   /* looping trough interfaces */
+   for (ifn = ifnet; ifn; ifn = ifn->int_next) {
+     if (net_output_pending(ifn)) {
++
++      /* dont forward to incoming interface if interface is mode ether */
++      if (in_if->mode == IF_MODE_ETHER && ifn == in_if) continue;
++
+       /*
+        * Check if message is to big to be piggybacked
+        */
+@@ -412,7 +417,7 @@
   *@return a 8bit value from 0-7 representing the willingness
   */
  
@@ -11367,7 +11834,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
  olsr_calculate_willingness(void)
  {
    struct olsr_apm_info ainfo;
-@@ -440,7 +440,7 @@
+@@ -440,7 +445,7 @@
  }
  
  const char *
@@ -11376,7 +11843,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
  {
    static char type[20];
  
-@@ -466,7 +466,7 @@
+@@ -466,7 +471,7 @@
  }
  
  const char *
@@ -11385,7 +11852,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
  {
    static char type[20];
  
-@@ -490,7 +490,7 @@
+@@ -490,7 +495,7 @@
  }
  
  const char *
@@ -11394,9 +11861,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.c
  {
    static char type[20];
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr.h
 --- a/src/olsr.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -45,10 +45,10 @@
  #include "olsr_protocol.h"
  #include "interfaces.h"
@@ -11412,14 +11879,17 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.h
  
  extern union olsr_ip_addr all_zero;
  
-@@ -58,7 +58,7 @@
+@@ -58,9 +58,9 @@
  
  void init_msg_seqno(void);
  
 -olsr_u16_t get_msg_seqno(void);
 +uint16_t get_msg_seqno(void);
  
- int olsr_forward_message(union olsr_message *, union olsr_ip_addr *);
+-int olsr_forward_message(union olsr_message *, union olsr_ip_addr *);
++int olsr_forward_message(union olsr_message *, struct interface *, union olsr_ip_addr *);
+ 
+ void set_buffer_timer(struct interface *);
  
 @@ -70,13 +70,13 @@
  
@@ -11439,9 +11909,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr.h
  
  void olsr_exit(const char *, int);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_cfg.h
 --- a/src/olsr_cfg.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_cfg.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_cfg.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -55,12 +55,12 @@
  /* Default values not declared in olsr_protocol.h */
  #define DEF_POLLRATE        0.05
@@ -11458,16 +11928,17 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
  #define DEF_FIB_METRIC      FIBM_FLAT
  #define DEF_LQ_LEVEL        2
  #define DEF_LQ_FISH         0
-@@ -68,7 +68,7 @@
+@@ -68,7 +68,8 @@
  #define DEF_LQ_DIJK_INTER   0.0
  #define DEF_LQ_NAT_THRESH   1.0
  #define DEF_LQ_AGING        0.1
 -#define DEF_CLEAR_SCREEN    OLSR_FALSE
 +#define DEF_CLEAR_SCREEN    false
++#define DEF_OLSRPORT        698
  
  /* Bounds */
  
-@@ -113,13 +113,13 @@
+@@ -113,17 +114,18 @@
  
  struct olsr_lq_mult {
    union olsr_ip_addr addr;
@@ -11483,7 +11954,12 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
  };
  
  struct if_config_options {
-@@ -133,14 +133,14 @@
+   union olsr_ip_addr ipv4_broadcast;
++  int mode;
+   int ipv6_addrtype;
+   union olsr_ip_addr ipv6_multi_site;
+   union olsr_ip_addr ipv6_multi_glbl;
+@@ -133,14 +135,14 @@
    struct olsr_msg_params mid_params;
    struct olsr_msg_params hna_params;
    struct olsr_lq_mult *lq_mult;
@@ -11501,9 +11977,11 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
    union olsr_ip_addr hemu_ip;
    struct interface *interf;
    struct if_config_options *cnf;
-@@ -182,17 +182,17 @@
+@@ -181,18 +183,20 @@
+  */
  
  struct olsrd_config {
++  uint16_t olsrport;
    int debug_level;
 -  olsr_bool no_fork;
 -  olsr_bool host_emul;
@@ -11518,6 +11996,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
 -  olsr_bool willingness_auto;
 +  bool allow_no_interfaces;
 +  uint16_t tos;
++  uint8_t rtproto;
 +  uint8_t rttable;
 +  uint8_t rttable_default;
 +  uint8_t willingness;
@@ -11528,7 +12007,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
    olsr_fib_metric_options fib_metric;
    struct hyst_param hysteresis_param;
    struct plugin_entry *plugins;
-@@ -201,21 +201,21 @@
+@@ -201,21 +205,21 @@
    struct olsr_if *interfaces;
    float pollrate;
    float nic_chgs_pollrate;
@@ -11559,7 +12038,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
    union olsr_ip_addr main_addr;        /* Main address of this node */
    float will_int;
    float max_jitter;
-@@ -241,11 +241,11 @@
+@@ -241,11 +245,11 @@
   * List functions
   */
  
@@ -11574,7 +12053,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
  
  /*
   * Interface to parser
-@@ -261,7 +261,7 @@
+@@ -261,7 +265,7 @@
  
    int olsrd_write_cnf(struct olsrd_config *, const char *);
  
@@ -11583,9 +12062,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cfg.h
  
    struct if_config_options *get_default_if_config(void);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cookie.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_cookie.c
 --- a/src/olsr_cookie.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_cookie.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_cookie.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -152,13 +152,13 @@
  /*
   * Basic sanity checking for a passed-in cookie-id.
@@ -11639,10 +12118,19 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_cookie.c
  
    } else {
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_protocol.h
 --- a/src/olsr_protocol.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_protocol.h	Fri Mar 13 19:16:23 2009 +0100
-@@ -61,7 +61,7 @@
++++ b/src/olsr_protocol.h	Mon Mar 16 19:04:32 2009 +0100
+@@ -52,16 +52,12 @@
+ 
+ #include <string.h>
+ 
+-/* Port for OLSR to use */
+-
+-#define OLSRPORT       698
+-
+ /* Default IPv6 multicast addresses */
+ 
  #define OLSR_IPV6_MCAST_SITE_LOCAL "ff05::15"
  #define OLSR_IPV6_MCAST_GLOBAL     "ff0e::1"
  
@@ -11651,7 +12139,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
  
  #define OLSR_MSGHDRSZ_IPV4 12
  #define OLSR_MSGHDRSZ_IPV6 24
-@@ -196,16 +196,16 @@
+@@ -196,16 +192,16 @@
   *Hello info
   */
  struct hellinfo {
@@ -11675,7 +12163,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
    struct hellinfo hell_info[1];
  } __attribute__ ((packed));
  
-@@ -214,16 +214,16 @@
+@@ -214,16 +210,16 @@
   */
  
  struct hellinfo6 {
@@ -11698,7 +12186,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
    struct hellinfo6 hell_info[1];
  } __attribute__ ((packed));
  
-@@ -232,12 +232,12 @@
+@@ -232,12 +228,12 @@
   */
  
  struct neigh_info {
@@ -11714,7 +12202,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
    struct neigh_info neigh[1];
  } __attribute__ ((packed));
  
-@@ -250,8 +250,8 @@
+@@ -250,8 +246,8 @@
  } __attribute__ ((packed));
  
  struct olsr_tcmsg6 {
@@ -11725,7 +12213,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
    struct neigh_info6 neigh[1];
  } __attribute__ ((packed));
  
-@@ -265,7 +265,7 @@
+@@ -265,7 +261,7 @@
   * is associated whit each address?
   */
  struct midaddr {
@@ -11734,7 +12222,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
  } __attribute__ ((packed));
  
  struct midmsg {
-@@ -287,8 +287,8 @@
+@@ -287,8 +283,8 @@
   * Host and Network Association message
   */
  struct hnapair {
@@ -11745,7 +12233,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
  } __attribute__ ((packed));
  
  struct hnamsg {
-@@ -313,13 +313,13 @@
+@@ -313,13 +309,13 @@
   */
  
  struct olsrmsg {
@@ -11766,7 +12254,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
  
    union {
      struct hellomsg hello;
-@@ -335,13 +335,13 @@
+@@ -335,13 +331,13 @@
   */
  
  struct olsrmsg6 {
@@ -11786,7 +12274,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
  
    union {
      struct hellomsg6 hello;
-@@ -357,14 +357,14 @@
+@@ -357,14 +353,14 @@
   */
  
  struct olsr {
@@ -11805,9 +12293,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_protocol.h
    struct olsrmsg6 olsr_msg[1];         /* variable messages */
  } __attribute__ ((packed));
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_spf.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_spf.c
 --- a/src/olsr_spf.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_spf.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_spf.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -108,7 +108,7 @@
  
  #ifdef DEBUG
@@ -11869,9 +12357,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_spf.c
                    : "<none>", new_tc->hops);
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/main.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_switch/main.c
 --- a/src/olsr_switch/main.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_switch/main.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_switch/main.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -71,7 +71,7 @@
  static int srv_socket;
  
@@ -11908,9 +12396,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/main.c
  
  #else
    signal(SIGINT, ohs_close);
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/ohs_cmd.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_switch/ohs_cmd.c
 --- a/src/olsr_switch/ohs_cmd.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_switch/ohs_cmd.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_switch/ohs_cmd.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -94,7 +94,7 @@
  
  #ifdef WIN32
@@ -11944,9 +12432,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/ohs_cmd.c
  
      args += get_next_token(args, tok_buf, TOK_BUF_SIZE);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/olsr_host_switch.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_switch/olsr_host_switch.h
 --- a/src/olsr_switch/olsr_host_switch.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_switch/olsr_host_switch.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_switch/olsr_host_switch.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -61,21 +61,21 @@
  
  struct ohs_ip_link {
@@ -11974,9 +12462,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_switch/olsr_host_switch.h
  
  extern struct ohs_connection *ohs_conns;
  
-diff -r feb3d7883ff0 -r d73e73400732 src/olsr_types.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/olsr_types.h
 --- a/src/olsr_types.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/olsr_types.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/olsr_types.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -47,39 +47,45 @@
  #ifndef _OLSR_TYPES_H
  #define	_OLSR_TYPES_H
@@ -12056,9 +12544,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/olsr_types.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/packet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/packet.c
 --- a/src/packet.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/packet.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/packet.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -50,7 +50,7 @@
  #include "net_olsr.h"
  #include "lq_plugin.h"
@@ -12120,9 +12608,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/packet.c
      }
    }
  
-diff -r feb3d7883ff0 -r d73e73400732 src/packet.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/packet.h
 --- a/src/packet.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/packet.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/packet.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -47,23 +47,23 @@
  #include "mantissa.h"
  
@@ -12200,9 +12688,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/packet.h
  };
  
  void olsr_free_hello_packet(struct hello_message *);
-diff -r feb3d7883ff0 -r d73e73400732 src/parser.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/parser.c
 --- a/src/parser.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/parser.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/parser.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -77,10 +77,10 @@
  
  static char inbuf[MAXMESSAGESIZE + 1];
@@ -12243,7 +12731,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/parser.c
  
      if (count < MIN_PACKET_SIZE(olsr_cnf->ip_version))
        break;
-@@ -351,7 +351,7 @@
+@@ -351,13 +351,13 @@
        /* Promiscuous or exact match */
        if ((entry->type == PROMISCUOUS) || (entry->type == m->v4.olsr_msgtype)) {
          if (!entry->function(m, in_if, from_addr))
@@ -12252,6 +12740,13 @@ diff -r feb3d7883ff0 -r d73e73400732 src/parser.c
        }
        entry = entry->next;
      }
+ 
+     if (forward) {
+-      olsr_forward_message(m, from_addr);
++      olsr_forward_message(m, in_if, from_addr);
+     }
+   }                             /* for olsr_msg */
+ }
 @@ -472,7 +472,7 @@
    socklen_t fromlen;
    struct interface *olsr_in_if;
@@ -12261,9 +12756,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/parser.c
    struct preprocessor_function_entry *entry;
    char *packet;
  
-diff -r feb3d7883ff0 -r d73e73400732 src/parser.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/parser.h
 --- a/src/parser.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/parser.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/parser.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -48,10 +48,10 @@
  #define PROMISCUOUS 0xffffffff
  
@@ -12298,9 +12793,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/parser.h
  
  void olsr_preprocessor_add_function(preprocessor_function);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/print_packet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/print_packet.c
 --- a/src/print_packet.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/print_packet.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/print_packet.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -47,25 +47,25 @@
  #include "lq_packet.h"
  #include "net_olsr.h"
@@ -12467,9 +12962,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/print_packet.c
  {
    int remsize = totsize - ((olsr_cnf->ip_version == AF_INET) ? OLSR_MSGHDRSZ_IPV4 : OLSR_MSGHDRSZ_IPV6);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/print_packet.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/print_packet.h
 --- a/src/print_packet.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/print_packet.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/print_packet.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -46,9 +46,9 @@
  #include "olsr_protocol.h"
  #include <stdio.h>
@@ -12482,9 +12977,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/print_packet.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/process_package.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/process_package.c
 --- a/src/process_package.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/process_package.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/process_package.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -61,7 +61,7 @@
  
  static void linking_this_2_entries(struct neighbor_entry *, struct neighbor_2_entry *, olsr_reltime);
@@ -12599,9 +13094,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/process_package.c
    }
  
    /* Don't register neighbors of neighbors that announces WILL_NEVER */
-diff -r feb3d7883ff0 -r d73e73400732 src/process_package.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/process_package.h
 --- a/src/process_package.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/process_package.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/process_package.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -46,7 +46,7 @@
  #include "packet.h"
  #include "neighbor_table.h"
@@ -12611,9 +13106,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/process_package.h
  
  void olsr_init_package_process(void);
  
-diff -r feb3d7883ff0 -r d73e73400732 src/process_routes.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/process_routes.c
 --- a/src/process_routes.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/process_routes.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/process_routes.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -68,11 +68,11 @@
   * Called before enqueuing a change/delete operation
   *
@@ -12646,9 +13141,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/process_routes.c
  
      if (error < 0) {
        const char *const err_msg = strerror(errno);
-diff -r feb3d7883ff0 -r d73e73400732 src/process_routes.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/process_routes.h
 --- a/src/process_routes.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/process_routes.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/process_routes.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -56,7 +56,7 @@
  void olsr_update_rib_routes(void);
  void olsr_update_kernel_routes(void);
@@ -12658,9 +13153,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/process_routes.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/routing_table.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/routing_table.c
 --- a/src/routing_table.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/routing_table.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/routing_table.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -106,8 +106,8 @@
  {
    const struct olsr_ip_prefix *pfx1 = prefix1;
@@ -12800,9 +13295,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/routing_table.c
                    if_ifwithindex_name(rt->rt_nexthop.iif_index), rtp->rtp_version);
      }
    }
-diff -r feb3d7883ff0 -r d73e73400732 src/routing_table.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/routing_table.h
 --- a/src/routing_table.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/routing_table.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/routing_table.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -66,7 +66,7 @@
  /* a composite metric is used for path selection */
  struct rt_metric {
@@ -12854,9 +13349,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/routing_table.h
  
  char *olsr_rt_to_string(const struct rt_entry *);
  char *olsr_rtp_to_string(const struct rt_path *);
-diff -r feb3d7883ff0 -r d73e73400732 src/scheduler.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/scheduler.c
 --- a/src/scheduler.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/scheduler.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/scheduler.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -81,7 +81,7 @@
  {
    struct timespec remainder_spec, sleeptime_spec;
@@ -12911,9 +13406,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/scheduler.c
                 void (*timer_cb_function) (void *), void *context, olsr_cookie_t cookie)
  {
  
-diff -r feb3d7883ff0 -r d73e73400732 src/scheduler.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/scheduler.h
 --- a/src/scheduler.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/scheduler.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/scheduler.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -69,8 +69,8 @@
    clock_t timer_clock;                 /* when timer shall fire (absolute time) */
    unsigned int timer_period;           /* set for periodical timers (relative time) */
@@ -12938,9 +13433,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/scheduler.h
  void olsr_stop_timer(struct timer_entry *);
  
  /* Printing timestamps */
-diff -r feb3d7883ff0 -r d73e73400732 src/tc_set.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/tc_set.c
 --- a/src/tc_set.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/tc_set.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/tc_set.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -89,38 +89,38 @@
  /* Enlarges the value window for upcoming ansn/seqno to be accepted */
  #define TC_SEQNO_WINDOW_MULT 8
@@ -13241,9 +13736,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/tc_set.c
  }
  
  /*
-diff -r feb3d7883ff0 -r d73e73400732 src/tc_set.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/tc_set.h
 --- a/src/tc_set.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/tc_set.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/tc_set.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -62,8 +62,8 @@
    struct tc_edge_entry *edge_inv;      /* shortcut, used during SPF calculation */
    struct tc_entry *tc;                 /* backpointer to owning tc entry */
@@ -13308,9 +13803,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/tc_set.h
  
  #endif
  
-diff -r feb3d7883ff0 -r d73e73400732 src/two_hop_neighbor_table.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/two_hop_neighbor_table.c
 --- a/src/two_hop_neighbor_table.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/two_hop_neighbor_table.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/two_hop_neighbor_table.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -132,7 +132,7 @@
  void
  olsr_insert_two_hop_neighbor_table(struct neighbor_2_entry *two_hop_neighbor)
@@ -13361,9 +13856,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/two_hop_neighbor_table.c
        }
      }
    }
-diff -r feb3d7883ff0 -r d73e73400732 src/two_hop_neighbor_table.h
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/two_hop_neighbor_table.h
 --- a/src/two_hop_neighbor_table.h	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/two_hop_neighbor_table.h	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/two_hop_neighbor_table.h	Mon Mar 16 19:04:32 2009 +0100
 @@ -59,9 +59,9 @@
  
  struct neighbor_2_entry {
@@ -13377,9 +13872,9 @@ diff -r feb3d7883ff0 -r d73e73400732 src/two_hop_neighbor_table.h
    struct neighbor_list_entry neighbor_2_nblist;
    struct neighbor_2_entry *prev;
    struct neighbor_2_entry *next;
-diff -r feb3d7883ff0 -r d73e73400732 src/unix/ifnet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/unix/ifnet.c
 --- a/src/unix/ifnet.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/unix/ifnet.c	Fri Mar 13 19:16:23 2009 +0100
++++ b/src/unix/ifnet.c	Mon Mar 16 19:04:32 2009 +0100
 @@ -203,7 +203,7 @@
      goto remove_interface;
    }
@@ -13472,6 +13967,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/unix/ifnet.c
  
    /* trying to detect if interface is wireless. */
    ifs.is_wireless = check_wireless_interface(ifr.ifr_name);
+@@ -677,7 +682,7 @@
+     ifs.int6_multaddr.sin6_family = AF_INET6;
+     ifs.int6_multaddr.sin6_flowinfo = htonl(0);
+     ifs.int6_multaddr.sin6_scope_id = if_nametoindex(ifr.ifr_name);
+-    ifs.int6_multaddr.sin6_port = htons(OLSRPORT);
++    ifs.int6_multaddr.sin6_port = htons(olsr_cnf->olsrport);
+     ifs.int6_multaddr.sin6_addr =
+       (iface->cnf->ipv6_addrtype == IPV6_ADDR_SITELOCAL) ? iface->cnf->ipv6_multi_site.v6 : iface->cnf->ipv6_multi_glbl.v6;
+ 
 @@ -710,7 +715,7 @@
      /* Find broadcast address */
      if (iface->cnf->ipv4_broadcast.v4.s_addr) {
@@ -13481,28 +13985,10 @@ diff -r feb3d7883ff0 -r d73e73400732 src/unix/ifnet.c
      } else {
        /* Autodetect */
        if (ioctl(olsr_cnf->ioctl_s, SIOCGIFBRDADDR, &ifr) < 0) {
-diff -r feb3d7883ff0 -r d73e73400732 src/win32/ifnet.c
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/win32/ifnet.c
 --- a/src/win32/ifnet.c	Tue Dec 02 11:42:51 2008 +0100
-+++ b/src/win32/ifnet.c	Fri Mar 13 19:16:23 2009 +0100
-@@ -506,6 +506,8 @@
-     Prev->int_next = Int->int_next;
-   }
- 
-+  /* deactivated to prevent change of originator IP */
-+#if 0
-   if (ipequal(&olsr_cnf->main_addr, &Int->ip_addr)) {
-     if (ifnet == NULL) {
-       memset(&olsr_cnf->main_addr, 0, olsr_cnf->ipsize);
-@@ -518,7 +520,7 @@
-       OLSR_PRINTF(1, "New main address: %s.\n", olsr_ip_to_string(&buf, &olsr_cnf->main_addr));
-     }
-   }
--
-+#endif
-   /*
-    * Deregister functions for periodic message generation
-    */
-@@ -550,7 +552,7 @@
++++ b/src/win32/ifnet.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -550,7 +550,7 @@
  {
    struct interface *ifp;
    union olsr_ip_addr null_addr;
@@ -13511,7 +13997,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/win32/ifnet.c
    struct ipaddr_str buf;
    size_t name_size;
  
-@@ -561,11 +563,11 @@
+@@ -561,11 +561,11 @@
  
    memset(ifp, 0, sizeof(struct interface));
  
@@ -13525,23 +14011,7 @@ diff -r feb3d7883ff0 -r d73e73400732 src/win32/ifnet.c
    ifp->int_name = olsr_malloc(name_size, "Interface update 3");
    ifp->int_metric = 0;
  
-@@ -763,12 +765,14 @@
-     AddrIn->sin_port = 0;
-     AddrIn->sin_addr = NewVal.v4;
- 
-+    /* deactivated to prevent change of originator IP */
-+#if 0
-     if (olsr_cnf->main_addr.v4.s_addr == OldVal.v4.s_addr) {
-       OLSR_PRINTF(1, "\tMain address change.\n");
- 
-       olsr_cnf->main_addr.v4 = NewVal.v4;
-     }
--
-+#endif
-     Res = 1;
-   }
- 
-@@ -882,7 +886,7 @@
+@@ -882,7 +882,7 @@
  
    New->int_flags = 0;
  
@@ -13550,3 +14020,15 @@ diff -r feb3d7883ff0 -r d73e73400732 src/win32/ifnet.c
  
    New->int_mtu = Info.Mtu;
  
+diff -r feb3d7883ff0 -r bce022dcdcd8 src/win32/net.c
+--- a/src/win32/net.c	Tue Dec 02 11:42:51 2008 +0100
++++ b/src/win32/net.c	Mon Mar 16 19:04:32 2009 +0100
+@@ -132,7 +132,7 @@
+ 
+   memset(&Addr, 0, sizeof(Addr));
+   Addr.sin_family = AF_INET;
+-  Addr.sin_port = htons(OLSRPORT);
++  Addr.sin_port = htons(olsr_cnf->olsrport);
+   Addr.sin_addr.s_addr = INADDR_ANY;
+   if (bind(Sock, (struct sockaddr *)&Addr, sizeof(Addr)) < 0) {
+     WinSockPError("getsocket/bind()");
