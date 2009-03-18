@@ -3,17 +3,6 @@
 # Post-install script for ninux.org brcm config package
 #
 
-#OLSR DUAL STACK
-
-cp "${IPKG_INSTROOT}/etc/init.d/olsrd" "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6"
-
-sed 's/USE_CONF_F=/USE_CONF_F=\/etc\/olsrd.conf/' "${IPKG_INSTROOT}/etc/init.d/olsrd" > "${IPKG_INSTROOT}/tmp/olsrd" && mv -f "${IPKG_INSTROOT}/tmp/olsrd" "${IPKG_INSTROOT}/etc/init.d/olsrd" >&- 2>&-
-
-sed 's/USE_CONF_F=/USE_CONF_F=\/etc\/olsrd-ipv6.conf/' "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" > "${IPKG_INSTROOT}/tmp/olsrd-ipv6" && mv -f "${IPKG_INSTROOT}/tmp/olsrd-ipv6" "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" >&- 2>&-
-
-chmod +x  "${IPKG_INSTROOT}/etc/init.d/olsrd" >&- 2>&-
-chmod +x "${IPKG_INSTROOT}/etc/init.d/olsrd-ipv6" >&- 2>&-
-
 #SBRACA IL FIREWALL
 
 sed 's/DROP/ACCEPT/' "${IPKG_INSTROOT}/etc/config/firewall" > "${IPKG_INSTROOT}/tmp/firewall" && mv -f "${IPKG_INSTROOT}/tmp/firewall" "${IPKG_INSTROOT}/etc/config/firewall" >&- 2>&-
