@@ -6,7 +6,7 @@ config olsrd
 
 config LoadPlugin
 	option library 'olsrd_mdns.so.1.0.0'
-	option "NonOlsrIf"  "eth0.0"
+	option "NonOlsrIf"  "eth0"
 
 config Interface
 	list interface 'ninuxif'
