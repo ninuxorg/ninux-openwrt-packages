@@ -2,7 +2,10 @@ config olsrd
 	# uncomment the following line to use a custom config file instead:
 	#option config_file '/etc/olsrd.conf'
 
-	option IpVersion '6and4'
+        #option IpVersion '6and4'
+        # Do not use 6and4 until this ticket is solved: https://dev.openwrt.org/ticket/4803
+        option IpVersion '4'
+
 
 config LoadPlugin
 	option library 'olsrd_mdns.so.1.0.0'
