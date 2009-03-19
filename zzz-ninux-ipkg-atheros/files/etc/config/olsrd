@@ -11,10 +11,10 @@ config LoadPlugin
 config Interface
 	list interface 'ninuxif'
 
-iconfig 'Hna4'
+config 'Hna4'
 	option 'netaddr' '192.168.1.0'
 	option 'netmask' '255.255.255.0'
 
-#iconfig 'Hna6'
+#config 'Hna6'
 #	option 'netaddr' '2002::'
 #	option 'prefix' '64'
