@@ -9,12 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prosody
-PKG_VERSION:=0.3.0
+PKG_VERSION:=0.4.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://prosody.im/downloads/source/
-PKG_MD5SUM:=97b19d75b3d6770fb9b46b6452f945dd
+PKG_MD5SUM:=c143532a289a72d5d48b81b5bdac7c25
 
 include $(INCLUDE_DIR)/package.mk
 
