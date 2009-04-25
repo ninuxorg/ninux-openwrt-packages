@@ -1,4 +1,4 @@
-module("luci.controller.nowolfsplash.index", package.seeall)
+module("luci.controller.nowolfsplash.nowolfsplash", package.seeall)
 
 function index()
     entry({"nowolfsplash"}, call("show_agreement"), "Click here", 10).dependent=false
