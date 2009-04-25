@@ -20,6 +20,8 @@ LUA_TARGET ?= source
 
 LUA_MODULEDIR = /usr/lib/lua
 LUA_LIBRARYDIR = /usr/lib/lua
+LUCI_MODULEDIR = /usr/lib/lua/luci
+LUCI_LIBRARYDIR = /usr/lib/lua/luci
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -33,7 +35,7 @@ define Package/nowolfsplash
 endef
 
 define Package/nowolfsplash/description
-   A captive portal written in LUA
+	A captive portal written in LUA
 endef
 
 
@@ -45,11 +47,11 @@ endef
 
 define Package/nowolfsplash/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua
-        $(INSTALL_DIR) $(1)/$(LUA_MODULEDIR)
-        $(INSTALL_DIR) $(1)/$(LUCI_MODULEDIR)
-        $(INSTALL_DIR) $(1)/$(HTDOCS)
-        cp -rf root/* $(1)/
-        cp -rf luasrc/* $(1)/$(LUCI_MODULEDIR)
+	$(INSTALL_DIR) $(1)/$(LUA_MODULEDIR)
+	$(INSTALL_DIR) $(1)/$(LUCI_MODULEDIR)
+	$(INSTALL_DIR) $(1)/$(HTDOCS)
+	cp -rf root/* $(1)/
+#	cp -rf luasrc/* $(1)/$(LUCI_MODULEDIR)
 endef
 
 $(eval $(call BuildPackage,nowolfsplash))
