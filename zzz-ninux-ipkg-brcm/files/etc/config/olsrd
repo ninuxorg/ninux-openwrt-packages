@@ -3,8 +3,8 @@ config olsrd
 	#option config_file '/etc/olsrd.conf'
 
 	#option IpVersion '6and4'
-	# Do not use 6and4 until this ticket is solved: https://dev.openwrt.org/ticket/4803
-	option IpVersion '4'
+	# if 6and4 does not work make sure this patch is applied: https://dev.openwrt.org/ticket/4803
+	option IpVersion '6and4'
 
 config LoadPlugin
 	option library 'olsrd_mdns.so.1.0.0'
