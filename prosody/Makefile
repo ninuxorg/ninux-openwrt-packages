@@ -9,10 +9,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prosody
-PKG_VERSION:=0.5.2-beta
+PKG_VERSION:=0.5.2
 PKG_RELEASE:=0
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-beta.tar.gz
 PKG_SOURCE_URL:=http://prosody.im/downloads/source/
 PKG_MD5SUM:=09a84095a1bd5f410fcef52da2026a49
 
@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/prosody
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+liblua +libidn
+  DEPENDS:=+liblua +libidn +libopenssl 
   TITLE:=XMPP server
   URL:=http://prosody.im
 endef
