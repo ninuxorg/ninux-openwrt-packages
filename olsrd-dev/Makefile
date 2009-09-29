@@ -38,67 +38,67 @@ define Package/olsrd-dev/conffiles
 endef
 
 define Package/olsrd-mod-arprefresh
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Kernel ARP cache refresh plugin
 endef
 
 define Package/olsrd-mod-dot-draw
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Dot topology information plugin
 endef
 
 define Package/olsrd-mod-bmf
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev +kmod-tun
   TITLE:=Basic multicast forwarding plugin
 endef
 
 define Package/olsrd-mod-dyn-gw
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Dynamic internet gateway plugin
 endef
 
 define Package/olsrd-mod-dyn-gw-plain
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Dynamic internet gateway plain plugin
 endef
 
 define Package/olsrd-mod-httpinfo
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Small informative web server plugin
 endef
 
 define Package/olsrd-mod-nameservice
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Lightweight hostname resolver plugin
 endef
 
 define Package/olsrd-mod-secure
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Message signing plugin to secure routing domain
 endef
 
 define Package/olsrd-mod-txtinfo
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=Small informative web server plugin
 endef
 
 define Package/olsrd-mod-mdns
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
 endef
 
 define Package/olsrd-mod-obamp
-  $(call Package/olsrd/template)
+  $(call Package/olsrd-dev/template)
   DEPENDS:=olsrd-dev
   TITLE:=OBAMP overlay multicast 
 endef
@@ -148,59 +148,59 @@ endef
 
 define Package/olsrd-mod-arprefresh/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/arprefresh/olsrd_arprefresh.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/arprefresh/olsrd_arprefresh.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-dot-draw/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dot_draw/olsrd_dot_draw.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dot_draw/olsrd_dot_draw.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-bmf/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/bmf/olsrd_bmf.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/bmf/olsrd_bmf.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-dyn-gw/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dyn_gw/olsrd_dyn_gw.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dyn_gw/olsrd_dyn_gw.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-dyn-gw-plain/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dyn_gw_plain/olsrd_dyn_gw_plain.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/dyn_gw_plain/olsrd_dyn_gw_plain.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-httpinfo/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/httpinfo/olsrd_httpinfo.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/httpinfo/olsrd_httpinfo.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-nameservice/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/nameservice/olsrd_nameservice.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/nameservice/olsrd_nameservice.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-secure/install
 	$(INSTALL_DIR) $(1)/etc/olsrd.d
 	$(CP) ./files/olsrd_secure_key $(1)/etc/olsrd.d/
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/secure/olsrd_secure.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/secure/olsrd_secure.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-txtinfo/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/txtinfo/olsrd_txtinfo.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/txtinfo/olsrd_txtinfo.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-mdns/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/mdns/olsrd_mdns.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-mod-obamp/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/obamp/olsrd_obamp.so.* $(1)/usr/olsr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/olsr/lib/obamp/olsrd_obamp.so.* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,olsrd-dev))
