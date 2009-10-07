@@ -6,12 +6,8 @@ config olsrd
 	# if 6and4 does not work make sure this patch is applied: https://dev.openwrt.org/ticket/4803
 	option IpVersion '6and4'
 
-#config LoadPlugin
-#	option library 'olsrd_mdns.so.1.0.0'
-#	option "NonOlsrIf"  "eth0.0"
-
 config LoadPlugin
-	option library 'olsrd_obamp.so.1.0.0'
+	option library 'olsrd_mdns.so.1.0.0'
 	option "NonOlsrIf"  "eth0.0"
 
 config Interface
