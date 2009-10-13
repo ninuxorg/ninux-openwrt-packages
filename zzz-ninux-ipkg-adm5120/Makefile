@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ninux-adm5120
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+webif +webif-lang-it +olsrd +ip +libpthread  +horst +snmpd +tcpdump @TARGET_adm5120
+  DEPENDS:=+webif +webif-lang-it +olsrd-ninux +ip +libpthread  +horst +snmpd +tcpdump @TARGET_adm5120
   TITLE:=Ninux.org Community Config Package
 endef
 
