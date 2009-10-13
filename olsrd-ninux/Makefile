@@ -9,92 +9,92 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=olsrd
-PKG_VERSION:=0.5.6-r3
+PKG_VERSION:=0.5.6-r6
 PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://www.olsr.org/releases/0.5
-PKG_MD5SUM:=0935688fa0fb5b0e073fe53ec654c5b2
+PKG_MD5SUM:=07362792da718bed8943c2d7d1b4acfe
 
 include $(INCLUDE_DIR)/package.mk
 
 TARGET_CFLAGS += $(FPIC)
 
-define Package/olsrd/template
+define Package/olsrd-ninux/template
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=OLSR (Optimized Link State Routing) daemon
+  TITLE:=OLSR daemon with Ninux Patches
   URL:=http://www.olsr.org/
 endef
 
-define Package/olsrd
-  $(call Package/olsrd/template)
+define Package/olsrd-ninux
+  $(call Package/olsrd-ninux/template)
   MENU:=1
   DEPENDS:=+libpthread
 endef
 
-define Package/olsrd/conffiles
+define Package/olsrd-ninux/conffiles
 /etc/config/olsrd
 endef
 
 define Package/olsrd-mod-arprefresh
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Kernel ARP cache refresh plugin
 endef
 
 define Package/olsrd-mod-dot-draw
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Dot topology information plugin
 endef
 
 define Package/olsrd-mod-bmf
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd +kmod-tun
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux +kmod-tun
   TITLE:=Basic multicast forwarding plugin
 endef
 
 define Package/olsrd-mod-dyn-gw
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Dynamic internet gateway plugin
 endef
 
 define Package/olsrd-mod-dyn-gw-plain
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Dynamic internet gateway plain plugin
 endef
 
 define Package/olsrd-mod-httpinfo
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Small informative web server plugin
 endef
 
 define Package/olsrd-mod-nameservice
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Lightweight hostname resolver plugin
 endef
 
 define Package/olsrd-mod-secure
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Message signing plugin to secure routing domain
 endef
 
 define Package/olsrd-mod-txtinfo
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=Small informative web server plugin
 endef
 
 define Package/olsrd-mod-mdns
-  $(call Package/olsrd/template)
-  DEPENDS:=olsrd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
   TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
 endef
 
@@ -124,7 +124,7 @@ define Build/Compile
 		all libs install install_libs
 endef
 
-define Package/olsrd/install
+define Package/olsrd-ninux/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/olsrd.config $(1)/etc/config/olsrd
 	$(INSTALL_DIR) $(1)/usr/sbin
@@ -184,7 +184,7 @@ define Package/olsrd-mod-mdns/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
 endef
-$(eval $(call BuildPackage,olsrd))
+$(eval $(call BuildPackage,olsrd-ninux))
 $(eval $(call BuildPackage,olsrd-mod-arprefresh))
 $(eval $(call BuildPackage,olsrd-mod-dot-draw))
 $(eval $(call BuildPackage,olsrd-mod-bmf))
