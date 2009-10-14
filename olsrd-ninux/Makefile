@@ -38,67 +38,67 @@ define Package/olsrd-ninux/conffiles
 /etc/config/olsrd
 endef
 
-define Package/olsrd-mod-arprefresh
+define Package/olsrd-ninux-mod-arprefresh
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Kernel ARP cache refresh plugin
 endef
 
-define Package/olsrd-mod-dot-draw
+define Package/olsrd-ninux-mod-dot-draw
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Dot topology information plugin
 endef
 
-define Package/olsrd-mod-bmf
+define Package/olsrd-ninux-mod-bmf
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux +kmod-tun
   TITLE:=Basic multicast forwarding plugin
 endef
 
-define Package/olsrd-mod-dyn-gw
+define Package/olsrd-ninux-mod-dyn-gw
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Dynamic internet gateway plugin
 endef
 
-define Package/olsrd-mod-dyn-gw-plain
+define Package/olsrd-ninux-mod-dyn-gw-plain
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Dynamic internet gateway plain plugin
 endef
 
-define Package/olsrd-mod-httpinfo
+define Package/olsrd-ninux-mod-httpinfo
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Small informative web server plugin
 endef
 
-define Package/olsrd-mod-nameservice
+define Package/olsrd-ninux-mod-nameservice
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Lightweight hostname resolver plugin
 endef
 
-define Package/olsrd-mod-secure
+define Package/olsrd-ninux-mod-secure
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Message signing plugin to secure routing domain
 endef
 
-define Package/olsrd-mod-txtinfo
+define Package/olsrd-ninux-mod-txtinfo
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Small informative web server plugin
 endef
 
-define Package/olsrd-mod-mdns
+define Package/olsrd-ninux-mod-mdns
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
 endef
 
-define Package/olsrd-mod-secure/conffiles
+define Package/olsrd-ninux-mod-secure/conffiles
 /etc/olsrd.d/olsrd_secure_key
 endef
 
@@ -133,65 +133,65 @@ define Package/olsrd-ninux/install
 	$(INSTALL_BIN) ./files/olsrd.init $(1)/etc/init.d/olsrd
 endef
 
-define Package/olsrd-mod-arprefresh/install
+define Package/olsrd-ninux-mod-arprefresh/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/arprefresh/olsrd_arprefresh.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-dot-draw/install
+define Package/olsrd-ninux-mod-dot-draw/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/dot_draw/olsrd_dot_draw.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-bmf/install
+define Package/olsrd-ninux-mod-bmf/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/bmf/olsrd_bmf.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-dyn-gw/install
+define Package/olsrd-ninux-mod-dyn-gw/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/dyn_gw/olsrd_dyn_gw.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-dyn-gw-plain/install
+define Package/olsrd-ninux-mod-dyn-gw-plain/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/dyn_gw_plain/olsrd_dyn_gw_plain.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-httpinfo/install
+define Package/olsrd-ninux-mod-httpinfo/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/httpinfo/olsrd_httpinfo.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-nameservice/install
+define Package/olsrd-ninux-mod-nameservice/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/nameservice/olsrd_nameservice.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-secure/install
+define Package/olsrd-ninux-mod-secure/install
 	$(INSTALL_DIR) $(1)/etc/olsrd.d
 	$(CP) ./files/olsrd_secure_key $(1)/etc/olsrd.d/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/secure/olsrd_secure.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-txtinfo/install
+define Package/olsrd-ninux-mod-txtinfo/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/txtinfo/olsrd_txtinfo.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-mod-mdns/install
+define Package/olsrd-ninux-mod-mdns/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
 endef
 $(eval $(call BuildPackage,olsrd-ninux))
-$(eval $(call BuildPackage,olsrd-mod-arprefresh))
-$(eval $(call BuildPackage,olsrd-mod-dot-draw))
-$(eval $(call BuildPackage,olsrd-mod-bmf))
-$(eval $(call BuildPackage,olsrd-mod-dyn-gw))
-$(eval $(call BuildPackage,olsrd-mod-dyn-gw-plain))
-$(eval $(call BuildPackage,olsrd-mod-httpinfo))
-$(eval $(call BuildPackage,olsrd-mod-nameservice))
-$(eval $(call BuildPackage,olsrd-mod-secure))
-$(eval $(call BuildPackage,olsrd-mod-txtinfo))
-$(eval $(call BuildPackage,olsrd-mod-mdns))
+$(eval $(call BuildPackage,olsrd-ninux-mod-arprefresh))
+$(eval $(call BuildPackage,olsrd-ninux-mod-dot-draw))
+$(eval $(call BuildPackage,olsrd-ninux-mod-bmf))
+$(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw))
+$(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw-plain))
+$(eval $(call BuildPackage,olsrd-ninux-mod-httpinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
+$(eval $(call BuildPackage,olsrd-ninux-mod-secure))
+$(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
