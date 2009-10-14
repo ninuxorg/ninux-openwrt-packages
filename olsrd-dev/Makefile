@@ -4,7 +4,6 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
-# $Id: Makefile 13562 2008-12-09 10:32:28Z jow $
 
 include $(TOPDIR)/rules.mk
 
@@ -108,6 +107,7 @@ define Package/olsrd-mod-secure/conffiles
 endef
 
 define Build/Prepare
+	rm -f $(DL_DIR)/$(PKG_SOURCE)
 	$(call Package/Prepare/Default) 
 	gzip -dc $(DL_DIR)/$(PKG_SOURCE) | $(HOST_TAR) -C $(PKG_BUILD_DIR)/.. $(TAR_OPTIONS)
 	echo `/bin/ls $(PKG_BUILD_DIR)/../ | egrep "olsrd\-([a-f]|[0-9]){12}"`
