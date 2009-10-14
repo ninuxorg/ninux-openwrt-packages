@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ninux-brcm
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+radvd +ahcpd +olsrd-ninux +olsrd-mod-mdns +olsrd-mod-dot-draw +olsrd-mod-dyn-gw +olsrd-mod-httpinfo +olsrd-mod-nameservice +olsrd-mod-txtinfo +ip +wl +horst +snmpd +tcpdump +kmod-ipv6 +avahi-daemon +avahi-dnsconfd +iputils-ping6 +iputils-traceroute6 @TARGET_brcm47xx||@TARGET_brcm_2_4||@TARGET_ar7
+  DEPENDS:=+radvd +ahcpd +olsrd-ninux +olsrd-ninux-mod-mdns +olsrd-ninux-mod-dot-draw +olsrd-ninux-mod-dyn-gw +olsrd-ninux-mod-httpinfo +olsrd-ninux-mod-nameservice +olsrd-ninux-mod-txtinfo +ip +wl +horst +snmpd +tcpdump +kmod-ipv6 +avahi-daemon +avahi-dnsconfd +iputils-ping6 +iputils-traceroute6 @TARGET_brcm47xx||@TARGET_brcm_2_4||@TARGET_ar7
   TITLE:=Ninux.org Community Config Package
 endef
 
