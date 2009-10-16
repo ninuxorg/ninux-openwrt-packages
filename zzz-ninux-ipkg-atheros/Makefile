@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ninux-atheros
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+kmod-ipv6 +ahcpd +avahi-daemon +avahi-dnsconfd +iputils-ping6 +iputils-traceroute6 +webif +webif-lang-it +olsrd-ninux +olsrd-ninux-mod-dot-draw +olsrd-ninux-mod-dyn-gw +olsrd-ninux-mod-httpinfo +olsrd-ninux-mod-nameservice +olsrd-ninux-mod-txtinfo +olsrd-ninux-mod-mdns +ip +libpthread +horst +snmpd +tcpdump @TARGET_atheros 
+  DEPENDS:=+kmod-ipv6 +ahcpd +avahi-daemon +avahi-dnsconfd +iputils-ping6 +iputils-traceroute6 +webif +webif-lang-it +olsrd-ninux +olsrd-ninux-mod-dot-draw +olsrd-ninux-mod-dyn-gw +olsrd-ninux-mod-httpinfo +olsrd-ninux-mod-nameservice +olsrd-ninux-mod-txtinfo +olsrd-ninux-mod-mdns +olsrd-ninux-mod-arprefresh +ip +libpthread +horst +snmpd +tcpdump @TARGET_atheros 
   TITLE:=Ninux.org Community Config Package
 endef
 
