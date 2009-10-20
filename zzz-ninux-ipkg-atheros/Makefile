@@ -29,6 +29,7 @@ endef
 define Package/ninux-atheros/install
 	$(CP) -a ./files/* $(1)/
 	$(SED) 's,$$$$R,$(REVISION),g' $(1)/etc/banner 
+	mkdir -p $(1)/CONTROL
 	$(CP) -a ./ipkg/ninux-atheros.postinst $(1)/CONTROL/postinst
 	$(CP) -a ./ipkg/ninux-atheros.prerm $(1)/CONTROL/prerm
 endef
