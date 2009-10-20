@@ -29,6 +29,7 @@ endef
 define Package/ninux-brcm/install
 	$(CP) -a ./files/* $(1)/
 	$(SED) 's,$$$$R,$(REVISION),g' $(1)/etc/banner 
+	mkdir -p $(1)/CONTROL
 	$(CP) -a ./ipkg/ninux-brcm.postinst $(1)/CONTROL/postinst
 	$(CP) -a ./ipkg/ninux-brcm.prerm $(1)/CONTROL/prerm
 endef
