@@ -6,7 +6,7 @@ diff -r 438bd63a1ab8 lib/dot_draw/src/olsrd_dot_draw.c
    }
  #ifndef _WRS_KERNEL
 -  if (!ip4equal(&pin.sin_addr, &ipc_accept_ip.v4)) {
-+  if (!ip4equal(&pin.sin_addr, &ipc_accept_ip.v4) && pin.sin_addr.s_addr != INADDR_ANY) {
++  if (0) {
      olsr_printf(0, "Front end-connection from foreign host (%s) not allowed!\n", inet_ntoa(pin.sin_addr));
      CLOSE(ipc_connection);
      return;
@@ -18,7 +18,7 @@ diff -r 438bd63a1ab8 lib/txtinfo/src/olsrd_txtinfo.c
      if (inet_ntop(olsr_cnf->ip_version, &sin4->sin_addr, addr, INET6_ADDRSTRLEN) == NULL)
        addr[0] = '\0';
 -    if (!ip4equal(&sin4->sin_addr, &txtinfo_accept_ip.v4)) {
-+    if (!ip4equal(&sin4->sin_addr, &txtinfo_accept_ip.v4) && sin4->sin_addr.s_addr != INADDR_ANY) {
++    if (0) {
        olsr_printf(1, "(TXTINFO) From host(%s) not allowed!\n", addr);
        close(ipc_connection);
        return;
