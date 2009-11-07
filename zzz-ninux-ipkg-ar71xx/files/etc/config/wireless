@@ -1,0 +1,23 @@
+config wifi-device  wifi0
+	option type     atheros
+	option channel	'3'
+	option diversity	'0'
+	option txantenna	'0'
+	option disabled	'0'
+
+	# REMOVE THIS LINE TO ENABLE WIFI:
+
+config wifi-iface
+	option device	wifi0
+	option network	'ninuxif'
+	option mode	'adhoc'
+	option ssid	'ninux.org'
+	option bssid	'02:02:CA:FE:CA:FE'
+	option encryption none
+	option hidden	'0'
+	option isolate	'0'
+	option txpower	'18'
+	option bgscan	'0'
+	option wds	'0'
+
+

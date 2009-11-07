@@ -1,0 +1,6 @@
+config NINUX_AR71XX
+	prompt "Questo pacchetto prepara il router per la rete Ninux.org"
+	tristate
+	default m if CONFIG_DEVEL
+	help
+		Per la documentazione visita http://wiki.ninux.org
