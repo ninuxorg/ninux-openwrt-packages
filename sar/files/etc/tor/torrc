@@ -1,0 +1,2 @@
+SocksPort 9050 # what port to open for local application connections
+SocksListenAddress 127.0.0.1
