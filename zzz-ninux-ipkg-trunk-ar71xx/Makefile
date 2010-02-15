@@ -14,8 +14,8 @@ PKG_RELEASE:=beta
 # PKG_SOURCE_URL:=http://
 # PKG_MD5SUM:=
 # PKG_CAT:=zcat
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_INSTALL_DIR:=$(PKG_BUILD_DIR)/ipkg-install
+# PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+# PKG_INSTALL_DIR:=$(PKG_BUILD_DIR)/ipkg-install
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -30,8 +30,8 @@ define Package/ninux-ar71xx/install
 	$(CP) -a ./files/* $(1)/
 	$(SED) 's,$$$$R,$(REVISION),g' $(1)/etc/banner 
 	mkdir -p $(1)/CONTROL
-	$(CP) -a ./ipkg/ninux-ar71xx.postinst $(1)/CONTROL/postinst
-	$(CP) -a ./ipkg/ninux-ar71xx.prerm $(1)/CONTROL/prerm
+#	$(CP) -a ./ipkg/ninux-ar71xx.postinst $(1)/CONTROL/postinst
+#	$(CP) -a ./ipkg/ninux-ar71xx.prerm $(1)/CONTROL/prerm
 endef
 
 define Package/ninux-ar71xx/description
