@@ -1,7 +1,8 @@
-diff -r aac621d9803e -r 2226e0b6c6bc Makefile
---- a/Makefile	Mon Sep 01 22:01:42 2008 +0200
-+++ b/Makefile	Tue Oct 13 17:55:14 2009 +0200
-@@ -154,7 +154,7 @@
+diff --git a/Makefile b/Makefile
+index 7409421..50c2de9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -153,7 +153,7 @@ ifeq ($(OS),android)
  # nameservice: no regex
  SUBDIRS := bmf dot_draw dyn_gw_plain httpinfo mini quagga secure tas txtinfo watchdog
  else
@@ -10,20 +11,22 @@ diff -r aac621d9803e -r 2226e0b6c6bc Makefile
  endif
  endif
  endif
-@@ -226,6 +226,10 @@
-		$(MAKECMD) -C lib/quagga 
-		$(MAKECMD) -C lib/quagga DESTDIR=$(DESTDIR) install 
-
+@@ -217,6 +217,10 @@ quagga:
+ 		$(MAKECMD) -C lib/quagga 
+ 		$(MAKECMD) -C lib/quagga DESTDIR=$(DESTDIR) install 
+ 
 +mdns:
 +		$(MAKECMD) -C lib/mdns clean
 +		$(MAKECMD) -C lib/mdns 
 +		$(MAKECMD) -C lib/mdns DESTDIR=$(DESTDIR) install 
  txtinfo:
-		$(MAKECMD) -C lib/txtinfo clean
-		$(MAKECMD) -C lib/txtinfo 
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/Makefile
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/Makefile	Tue Oct 13 17:55:14 2009 +0200
+ 		$(MAKECMD) -C lib/txtinfo clean
+ 		$(MAKECMD) -C lib/txtinfo 
+diff --git a/lib/mdns/Makefile b/lib/mdns/Makefile
+new file mode 100644
+index 0000000..bee4372
+--- /dev/null
++++ b/lib/mdns/Makefile
 @@ -0,0 +1,33 @@
 +
 +OLSRD_PLUGIN =	true
@@ -58,9 +61,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/Makefile
 +		rm -f $(OBJS) $(SRCS:%.c=%.d) $(PLUGIN_FULLNAME)
 +
 +endif
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/README
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/README	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/README b/lib/mdns/README
+new file mode 100644
+index 0000000..9418f3d
+--- /dev/null
++++ b/lib/mdns/README
 @@ -0,0 +1,67 @@
 += OLSR mdns plugin =
 +
@@ -129,9 +134,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/README
 +=== Contact ===
 + * Saverio Proto proto@ing.uniroma2.it
 + * Claudio Pisa claudio.pisa@clauz.net
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Address.c
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.c	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/Address.c b/lib/mdns/src/Address.c
+new file mode 100644
+index 0000000..01f273c
+--- /dev/null
++++ b/lib/mdns/src/Address.c
 @@ -0,0 +1,78 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -211,9 +218,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Address.c
 +
 +  return (ntohl(ipAddress->v4.s_addr) & 0xF0000000) == 0xE0000000;
 +}
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Address.h
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Address.h	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/Address.h b/lib/mdns/src/Address.h
+new file mode 100644
+index 0000000..c1c3e71
+--- /dev/null
++++ b/lib/mdns/src/Address.h
 @@ -0,0 +1,53 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -268,9 +277,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Address.h
 +int IsMulticast(union olsr_ip_addr *ipAddress);
 +
 +#endif /* _MDNS_ADDRESS_H */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.c	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/NetworkInterfaces.c b/lib/mdns/src/NetworkInterfaces.c
+new file mode 100644
+index 0000000..750867d
+--- /dev/null
++++ b/lib/mdns/src/NetworkInterfaces.c
 @@ -0,0 +1,570 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -436,7 +447,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +    return -1;
 +  }
 +  //AddDescriptorToInputSet(skfd);
-+  add_olsr_socket(skfd, &DoMDNS);
++  add_olsr_socket(skfd, &DoMDNS,NULL, NULL, SP_PR_READ);
 +
 +  return skfd;
 +}                               /* CreateCaptureSocket */
@@ -464,7 +475,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +  int ioctlSkfd;
 +  struct ifreq ifr;
 +  int nOpened = 0;
-+  struct TBmfInterface *newIf = malloc(sizeof(struct TBmfInterface));
++  struct TBmfInterface *newIf = olsr_malloc(sizeof(struct TBmfInterface), "TBMFInterface (mdns)");
 +
 +  assert(ifName != NULL);
 +
@@ -527,7 +538,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +      newIf->intAddr.v4.s_addr = inet_addr("0.0.0.0");
 +    } else {
 +      /* Downcast to correct sockaddr subtype */
-+      newIf->intAddr.v4 = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
++      newIf->intAddr.v4 = ((struct sockaddr_in *)(ARM_NOWARN_ALIGN)&ifr.ifr_addr)->sin_addr;
 +    }
 +
 +    /* For a non-OLSR interface, retrieve the IP broadcast address ourselves */
@@ -540,7 +551,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +      newIf->broadAddr.v4.s_addr = inet_addr("0.0.0.0");
 +    } else {
 +      /* Downcast to correct sockaddr subtype */
-+      newIf->broadAddr.v4 = ((struct sockaddr_in *)&ifr.ifr_broadaddr)->sin_addr;
++      newIf->broadAddr.v4 = ((struct sockaddr_in *)(ARM_NOWARN_ALIGN)&ifr.ifr_broadaddr)->sin_addr;
 +    }
 +  }
 +
@@ -647,7 +658,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +    //}
 +
 +    /* ...find the OLSR interface structure, if any */
-+    ipAddr.v4 = ((struct sockaddr_in *)&ifr->ifr_addr)->sin_addr;
++    ipAddr.v4 = ((struct sockaddr_in *)(ARM_NOWARN_ALIGN)&ifr->ifr_addr)->sin_addr;
 +    olsrIntf = if_ifwithaddr(&ipAddr);
 +
 +    if (skipThisIntf != NULL && olsrIntf == skipThisIntf) {
@@ -842,9 +853,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.c
 +  }
 +  return 0;
 +}                               /* IsNonOlsrBmfIf */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.h
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/NetworkInterfaces.h	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/NetworkInterfaces.h b/lib/mdns/src/NetworkInterfaces.h
+new file mode 100644
+index 0000000..ada1027
+--- /dev/null
++++ b/lib/mdns/src/NetworkInterfaces.h
 @@ -0,0 +1,161 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -1007,10 +1020,12 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/NetworkInterfaces.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.c	Tue Oct 13 17:55:14 2009 +0200
-@@ -0,0 +1,237 @@
+diff --git a/lib/mdns/src/Packet.c b/lib/mdns/src/Packet.c
+new file mode 100644
+index 0000000..dfa0ab8
+--- /dev/null
++++ b/lib/mdns/src/Packet.c
+@@ -0,0 +1,239 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
 + * Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
@@ -1062,6 +1077,8 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +#include <netinet/ip.h>         /* struct iphdr */
 +
 +
++#include "defs.h"               /* ARM_NOWARN_ALIGN */
++
 +/* -------------------------------------------------------------------------
 + * Function   : IsIpFragment
 + * Description: Check if an IP packet is an IP fragment
@@ -1077,7 +1094,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL);
 +
-+  iph = (struct ip *)ipPacket;
++  iph = (struct ip *)(ARM_NOWARN_ALIGN)ipPacket;
 +  if ((ntohs(iph->ip_off) & IP_OFFMASK) != 0) {
 +    return 1;
 +  }
@@ -1100,7 +1117,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +  return ntohs(iph->tot_len);
 +}                               /* GetIpTotalLength */
 +
@@ -1119,7 +1136,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +  return iph->ihl << 2;
 +}                               /* GetIpHeaderLength */
 +
@@ -1139,7 +1156,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +  return iph->ttl;
 +}                               /* GetTtl */
 +
@@ -1159,7 +1176,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL && sttl != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +  sttl->ttl = iph->ttl;
 +  sttl->check = ntohs(iph->check);
 +}                               /* SaveTtlAndChecksum */
@@ -1181,7 +1198,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL && sttl != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +  iph->ttl = sttl->ttl;
 +  iph->check = htons(sttl->check);
 +}                               /* RestoreTtlAndChecksum */
@@ -1204,7 +1221,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +
 +  assert(ipPacket != NULL);
 +
-+  iph = (struct iphdr *)ipPacket;
++  iph = (struct iphdr *)(ARM_NOWARN_ALIGN)ipPacket;
 +
 +  iph->ttl--;                   /* decrement ttl */
 +  sum = ntohs(iph->check) + 0x100;      /* increment checksum high byte */
@@ -1222,7 +1239,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 +struct ip *
 +GetIpHeader(unsigned char *encapsulationUdpData)
 +{
-+  return (struct ip *)(encapsulationUdpData + ENCAP_HDR_LEN);
++  return (struct ip *)(ARM_NOWARN_ALIGN)(encapsulationUdpData + ENCAP_HDR_LEN);
 +}                               /* GetIpHeader */
 +
 +/* -------------------------------------------------------------------------
@@ -1248,9 +1265,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.h
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/Packet.h	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/Packet.h b/lib/mdns/src/Packet.h
+new file mode 100644
+index 0000000..466eff1
+--- /dev/null
++++ b/lib/mdns/src/Packet.h
 @@ -0,0 +1,81 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -1333,10 +1352,12 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/Packet.h
 +unsigned char *GetIpPacket(unsigned char *encapsulationUdpData);
 +
 +#endif /* _MDNS_PACKET_H */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.c	Tue Oct 13 17:55:14 2009 +0200
-@@ -0,0 +1,490 @@
+diff --git a/lib/mdns/src/mdns.c b/lib/mdns/src/mdns.c
+new file mode 100644
+index 0000000..e7f7971
+--- /dev/null
++++ b/lib/mdns/src/mdns.c
+@@ -0,0 +1,492 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
 + * Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
@@ -1431,8 +1452,9 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +  //union olsr_ip_addr mcDst;            /* Multicast destination of the encapsulated packet */
 +  struct TBmfInterface *walker;
 +  int stripped_len = 0;
-+  ipHeader = (struct ip *)encapsulationUdpData;
-+  ip6Header = (struct ip6_hdr *)encapsulationUdpData;
++  ipHeader = (struct ip *)(ARM_NOWARN_ALIGN)encapsulationUdpData;
++  ip6Header = (struct ip6_hdr *)(ARM_NOWARN_ALIGN)encapsulationUdpData;
++
 +  //mcSrc.v4 = ipHeader->ip_src;
 +  //mcDst.v4 = ipHeader->ip_dst;
 +  //OLSR_DEBUG(LOG_PLUGINS, "MDNS PLUGIN got packet from OLSR message\n");
@@ -1489,7 +1511,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +}                               /* PacketReceivedFromOLSR */
 +
 +
-+void
++bool
 +olsr_parser(union olsr_message *m, struct interface *in_if __attribute__ ((unused)), union olsr_ip_addr *ipaddr)
 +{
 +  union olsr_ip_addr originator;
@@ -1510,14 +1532,14 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +  /* Check if message originated from this node.
 +   *         If so - back off */
 +  if (ipequal(&originator, &olsr_cnf->main_addr))
-+    return ;
++    return false;
 +
 +  /* Check that the neighbor this message was received from is symmetric.
 +   *         If not - back off*/
 +  if (check_neighbor_link(ipaddr) != SYM_LINK) {
 +    //struct ipaddr_str strbuf;
 +    //OLSR_PRINTF(3, "NAME PLUGIN: Received msg from NON SYM neighbor %s\n", olsr_ip_to_string(&strbuf, ipaddr));
-+    return ;
++    return false;
 +  }
 +
 +  if (olsr_cnf->ip_version == AF_INET) {
@@ -1525,7 +1547,8 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +  } else {
 +    PacketReceivedFromOLSR((unsigned char *)&m->v6.message, size - 12 - 96);
 +  }
-+
++//forward the message
++return true;
 +}
 +
 +//Sends a packet in the OLSR network
@@ -1611,7 +1634,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +  char strDesc[MAX_STR_DESC];
 +
 +#if !defined REMOVE_LOG_DEBUG
-+  char *stringErr = strerror(errno);
++  //char *stringErr = strerror(errno);
 +#endif
 +  /* Rely on short-circuit boolean evaluation */
 +  if (format == NULL || *format == '\0') {
@@ -1681,7 +1704,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +
 +  if ((encapsulationUdpData[0] & 0xf0) == 0x40) {       //IPV4
 +
-+    ipHeader = (struct ip *)encapsulationUdpData;
++    ipHeader = (struct ip *)(ARM_NOWARN_ALIGN)encapsulationUdpData;
 +
 +    dst.v4 = ipHeader->ip_dst;
 +
@@ -1696,7 +1719,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +      //OLSR_PRINTF(1,"NON UDP PACKET\n");
 +      return;                   /* for */
 +    }
-+    udpHeader = (struct udphdr *)(encapsulationUdpData + GetIpHeaderLength(encapsulationUdpData));
++    udpHeader = (struct udphdr *)(ARM_NOWARN_ALIGN)(encapsulationUdpData + GetIpHeaderLength(encapsulationUdpData));
 +    destPort = ntohs(udpHeader->dest);
 +    if (destPort != 5353) {
 +      return;
@@ -1705,7 +1728,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +
 +  else if ((encapsulationUdpData[0] & 0xf0) == 0x60) {  //IPv6
 +
-+    ipHeader6 = (struct ip6_hdr *)encapsulationUdpData;
++    ipHeader6 = (struct ip6_hdr *)(ARM_NOWARN_ALIGN)encapsulationUdpData;
 +    if (ipHeader6->ip6_dst.s6_addr[0] == 0xff)  //Multicast
 +    {
 +      //Continua
@@ -1717,7 +1740,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +      //OLSR_PRINTF(1,"NON UDP PACKET\n");
 +      return;                   /* for */
 +    }
-+    udpHeader = (struct udphdr *)(encapsulationUdpData + 40);
++    udpHeader = (struct udphdr *)(ARM_NOWARN_ALIGN)(encapsulationUdpData + 40);
 +    destPort = ntohs(udpHeader->dest);
 +    if (destPort != 5353) {
 +      return;
@@ -1807,11 +1830,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +
 +
 +  //Tells OLSR to launch olsr_parser when the packets for this plugin arrive
-+  olsr_parser_add_function(&olsr_parser, PARSER_TYPE,1);
++  olsr_parser_add_function(&olsr_parser, PARSER_TYPE);
 +  //Creates captures sockets and register them to the OLSR scheduler
 +  CreateBmfNetworkInterfaces(skipThisIntf);
 +
-+  return 0;
++  return 1;
 +}                               /* InitMDNS */
 +
 +/* -------------------------------------------------------------------------
@@ -1827,9 +1850,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.c
 +{
 +  CloseBmfNetworkInterfaces();
 +}
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.h
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/mdns.h	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/mdns.h b/lib/mdns/src/mdns.h
+new file mode 100644
+index 0000000..89022c4
+--- /dev/null
++++ b/lib/mdns/src/mdns.h
 @@ -0,0 +1,96 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -1878,7 +1903,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.h
 +
 +#include "olsrd_plugin.h"             /* union set_plugin_parameter_addon */
 +#include "duplicate_set.h"
-+#include "socket_parser.h"
++#include "parser.h"
 +
 +#define MESSAGE_TYPE 132
 +#define PARSER_TYPE		MESSAGE_TYPE
@@ -1917,7 +1942,7 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.h
 +void olsr_mdns_gen(unsigned char *packet, int len);
 +
 +/* Parser function to register with the scheduler */
-+void olsr_parser(union olsr_message *, struct interface *, union olsr_ip_addr *);
++bool olsr_parser(union olsr_message *, struct interface *, union olsr_ip_addr *);
 +
 +#endif /* _MDNS_MDNS_H */
 +
@@ -1927,9 +1952,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/mdns.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/olsrd_plugin.c
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/src/olsrd_plugin.c	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/src/olsrd_plugin.c b/lib/mdns/src/olsrd_plugin.c
+new file mode 100644
+index 0000000..c03fb0f
+--- /dev/null
++++ b/lib/mdns/src/olsrd_plugin.c
 @@ -0,0 +1,192 @@
 +/*
 + * The olsr.org Optimized Link-State Routing daemon(olsrd)
@@ -2123,9 +2150,11 @@ diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/src/olsrd_plugin.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-diff -r aac621d9803e -r 2226e0b6c6bc lib/mdns/version-script.txt
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/lib/mdns/version-script.txt	Tue Oct 13 17:55:14 2009 +0200
+diff --git a/lib/mdns/version-script.txt b/lib/mdns/version-script.txt
+new file mode 100644
+index 0000000..a145659
+--- /dev/null
++++ b/lib/mdns/version-script.txt
 @@ -0,0 +1,10 @@
 +VERS_1.0
 +{
