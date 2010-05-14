@@ -1,0 +1,38 @@
+diff -Naur python-2 (copia).6.5-stackless/configure python-2.6.5-stackless/configure
+--- python-2 (copia).6.5-stackless/configure	2010-03-20 06:21:09.000000000 +0100
++++ python-2.6.5-stackless/configure	2010-04-13 11:21:52.000000000 +0200
+@@ -25792,7 +25792,7 @@
+ See \`config.log' for more details." >&5
+ $as_echo "$as_me: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&2;}
+-   { (exit 1); exit 1; }; }; }
++  }; }
+ else
+   cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+diff -Nur stackless-2.52/Makefile.pre.in
+stackless-2.52.mips.xcompile/Makefile.pre.in
+--- stackless-2.52/Makefile.pre.in	2008-02-01 01:00:55.000000000 +0800
++++ stackless-2.52.mips.xcompile/Makefile.pre.in	2008-04-08
+@@ -180,6 +180,9 @@
+
+ PYTHON=		python$(EXE)
+ BUILDPYTHON=	python$(BUILDEXE)
++HOSTPYTHON=	python2.6
++
++CROSS_COMPILE=	yes
+ 
+ 
+ 
+@@ -415,8 +415,8 @@
+ # Build the shared modules
+ sharedmods: $(BUILDPYTHON)
+ 	@case $$MAKEFLAGS in \
+-	*s*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py -q build;; \
+-	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py build;; \
++	*s*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' $(BUILDPYTHON) -E $(srcdir)/setup.py -q build;; \
++	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' $(BUILDPYTHON) -E $(srcdir)/setup.py build;; \
+ 	esac
+ 
+ # Build static library
+
