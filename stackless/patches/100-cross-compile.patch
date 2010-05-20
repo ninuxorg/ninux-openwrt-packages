@@ -1,30 +1,30 @@
-diff -Naur python-2 (copia).6.5-stackless/configure python-2.6.5-stackless/configure
---- python-2 (copia).6.5-stackless/configure	2010-03-20 06:21:09.000000000 +0100
-+++ python-2.6.5-stackless/configure	2010-04-13 11:21:52.000000000 +0200
-@@ -25792,7 +25792,7 @@
+diff -Nur stackless-2.6.2-orig//configure stackless-2.6.2/configure
+--- stackless-2.6.2-orig//configure	2010-05-20 17:33:32.999079687 +0200
++++ stackless-2.6.2/configure	2010-05-20 17:43:58.138186423 +0200
+@@ -2648,7 +2648,7 @@
  See \`config.log' for more details." >&5
- $as_echo "$as_me: error: cannot run test program while cross compiling
+ echo "$as_me: error: no acceptable C compiler found in \$PATH
  See \`config.log' for more details." >&2;}
--   { (exit 1); exit 1; }; }; }
-+  }; }
- else
-   cat >conftest.$ac_ext <<_ACEOF
- /* confdefs.h.  */
-diff -Nur stackless-2.52/Makefile.pre.in
-stackless-2.52.mips.xcompile/Makefile.pre.in
---- stackless-2.52/Makefile.pre.in	2008-02-01 01:00:55.000000000 +0800
-+++ stackless-2.52.mips.xcompile/Makefile.pre.in	2008-04-08
-@@ -180,6 +180,9 @@
-
+-   { (exit 1); exit 1; }; }
++}
+ 
+ # Provide some information about the compiler.
+ echo "$as_me:$LINENO: checking for C compiler version" >&5
+Binary files stackless-2.6.2-orig//.configure.swp and stackless-2.6.2/.configure.swp differ
+diff -Nur stackless-2.6.2-orig//Makefile.pre.in stackless-2.6.2/Makefile.pre.in
+--- stackless-2.6.2-orig//Makefile.pre.in	2010-05-20 17:33:32.989078907 +0200
++++ stackless-2.6.2/Makefile.pre.in	2010-05-20 17:37:52.429050922 +0200
+@@ -182,6 +182,9 @@
+ 
  PYTHON=		python$(EXE)
  BUILDPYTHON=	python$(BUILDEXE)
 +HOSTPYTHON=	python2.6
 +
 +CROSS_COMPILE=	yes
  
- 
- 
-@@ -415,8 +415,8 @@
+ # The task to run while instrument when building the profile-opt target
+ PROFILE_TASK=	$(srcdir)/Tools/pybench/pybench.py -n 2 --with-gc --with-syscheck
+@@ -411,8 +414,8 @@
  # Build the shared modules
  sharedmods: $(BUILDPYTHON)
  	@case $$MAKEFLAGS in \
@@ -35,4 +35,4 @@ stackless-2.52.mips.xcompile/Makefile.pre.in
  	esac
  
  # Build static library
-
+Binary files stackless-2.6.2-orig//.Makefile.pre.in.swp and stackless-2.6.2/.Makefile.pre.in.swp differ
