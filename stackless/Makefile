@@ -9,11 +9,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=stackless
-PKG_VERSION:=2.6.5
+PKG_VERSION:=2.6.2
 
-PKG_SOURCE:=$(PKG_NAME)-265-export.tar.bz2
+PKG_SOURCE:=$(PKG_NAME)-262-export.tar.bz2
 PKG_SOURCE_URL:=http://www.stackless.com/binaries/
-PKG_MD5SUM:=9361b9e486b49104e3f3a4e4a4123943
+PKG_MD5SUM:=cad498a856135ea2cef7407066b19304
 PKG_BUILD_DIR:=$(BUILD_DIR)/python-$(PKG_VERSION)-$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
