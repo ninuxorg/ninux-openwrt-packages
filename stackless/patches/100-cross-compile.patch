@@ -19,6 +19,24 @@ diff -Nur python-2.6.2-stackless-orig/configure python-2.6.2-stackless/configure
  else
    cat >conftest.$ac_ext <<_ACEOF
  /* confdefs.h.  */
+@@ -17158,7 +17158,7 @@
+ See \`config.log' for more details." >&5
+ echo "$as_me: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&2;}
+-   { (exit 1); exit 1; }; }
++   }
+ else
+   cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+@@ -24357,7 +24357,7 @@
+ See \`config.log' for more details." >&5
+ echo "$as_me: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&2;}
+-   { (exit 1); exit 1; }; }
++   }
+ else
+   cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
 diff -Nur python-2.6.2-stackless-orig/configure python-2.6.2-stackless/configure
 --- python-2.6.2-stackless-orig/Makefile.pre.in	2010-05-20 17:33:32.989078907 +0200
 +++ python-2.6.2-stackless/Makefile.pre.in	2010-05-20 17:37:52.429050922 +0200
