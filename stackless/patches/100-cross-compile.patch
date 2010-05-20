@@ -1,5 +1,5 @@
-diff -Nur stackless-2.6.2-orig/configure stackless-2.6.2/configure
---- stackless-2.6.2-orig/configure	2010-05-20 17:33:32.999079687 +0200
+diff -Nur python-2.6.2-stackless-orig/configure python-2.6.2-stackless/configure
+--- python-2.6.2-stackless-orig/configure	2010-05-20 17:33:32.999079687 +0200
 +++ python-2.6.2-stackless/configure	2010-05-20 17:43:58.138186423 +0200
 @@ -2648,7 +2648,7 @@
  See \`config.log' for more details." >&5
@@ -10,9 +10,8 @@ diff -Nur stackless-2.6.2-orig/configure stackless-2.6.2/configure
  
  # Provide some information about the compiler.
  echo "$as_me:$LINENO: checking for C compiler version" >&5
-Binary files stackless-2.6.2-orig//.configure.swp and stackless-2.6.2/.configure.swp differ
-diff -Nur stackless-2.6.2-orig/Makefile.pre.in stackless-2.6.2/Makefile.pre.in
---- stackless-2.6.2-orig/Makefile.pre.in	2010-05-20 17:33:32.989078907 +0200
+diff -Nur python-2.6.2-stackless-orig/configure python-2.6.2-stackless/configure
+--- python-2.6.2-stackless-orig/Makefile.pre.in	2010-05-20 17:33:32.989078907 +0200
 +++ python-2.6.2-stackless/Makefile.pre.in	2010-05-20 17:37:52.429050922 +0200
 @@ -182,6 +182,9 @@
  
@@ -35,4 +34,3 @@ diff -Nur stackless-2.6.2-orig/Makefile.pre.in stackless-2.6.2/Makefile.pre.in
  	esac
  
  # Build static library
-Binary files stackless-2.6.2-orig//.Makefile.pre.in.swp and stackless-2.6.2/.Makefile.pre.in.swp differ
