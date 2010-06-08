@@ -28,4 +28,7 @@ uci set wireless.@wifi-iface[0].bgscan=0
 
 uci commit
 
+[ -x /etc/init.d/firewall ] && /etc/init.d/firewall disable
+[ -x /etc/init.d/firewall ] && /etc/init.d/firewall stop
 
+touch /etc/configuredbyninux
