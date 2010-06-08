@@ -1,0 +1,31 @@
+
+set -a
+
+CHANNEL="3"
+ESSID="ninux.org"
+BSSID="02:02:CA:FE:CA:FE"
+
+uci delete network.lan.type
+
+uci set network.ninuxif=interface
+uci set network.ninuxif.proto=static
+uci set network.ninuxif.ipaddr=172.16.254.254
+uci set network.ninuxif.netmask=255.255.0.0
+uci set network.ninuxif.dns=8.8.8.8
+
+uci set wireless.wifi0.channel=$CHANNEL
+uci set wireless.wifi0.disabled=0
+#uci set wireless.wifi0.hwmode=11g
+#uci set wireless.wifi0.txpower=20
+
+uci set wireless.@wifi-iface[0].network=ninuxif
+uci set wireless.@wifi-iface[0].mode=adhoc
+uci set wireless.@wifi-iface[0].ssid=$ESSID
+uci set wireless.@wifi-iface[0].encryption=none
+uci set wireless.@wifi-iface[0].bssid=$BSSID
+#uci set wireless.@wifi-iface[0].rate=54M
+uci set wireless.@wifi-iface[0].bgscan=0
+
+uci commit
+
+
