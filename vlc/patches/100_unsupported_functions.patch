@@ -1,0 +1,44 @@
+diff -ruN vlc-0.9.6.ori/include/vlc_network.h vlc-0.9.6/include/vlc_network.h
+--- vlc-0.9.6.ori/include/vlc_network.h	2008-11-29 15:00:16.000000000 +0100
++++ vlc-0.9.6/include/vlc_network.h	2008-11-29 15:01:35.000000000 +0100
+@@ -276,6 +276,7 @@
+ #  define AI_NUMERICHOST 4
+ # endif /* if !HAVE_STRUCT_ADDRINFO */
+ 
++#undef AI_NUMERICSERV
+ #ifndef AI_NUMERICSERV
+ # define AI_NUMERICSERV 0
+ #endif
+diff -ruN vlc-0.9.6.ori/include/vlc_threads.h vlc-0.9.6/include/vlc_threads.h
+--- vlc-0.9.6.ori/include/vlc_threads.h	2008-11-29 15:00:16.000000000 +0100
++++ vlc-0.9.6/include/vlc_threads.h	2008-11-29 15:01:06.000000000 +0100
+@@ -468,6 +468,7 @@
+     return p_ret;
+ }
+ 
++#undef _POSIX_SPIN_LOCKS
+ # if defined (_POSIX_SPIN_LOCKS) && ((_POSIX_SPIN_LOCKS - 0) > 0)
+ typedef pthread_spinlock_t vlc_spinlock_t;
+ 
+diff -ruN vlc-0.9.6.ori/src/misc/mtime.c vlc-0.9.6/src/misc/mtime.c
+--- vlc-0.9.6.ori/src/misc/mtime.c	2008-11-29 15:00:20.000000000 +0100
++++ vlc-0.9.6/src/misc/mtime.c	2008-11-29 15:01:06.000000000 +0100
+@@ -72,6 +72,7 @@
+ int nanosleep(struct timespec *, struct timespec *);
+ #endif
+ 
++#undef _POSIX_CLOCK_SELECTION
+ #if !defined (_POSIX_CLOCK_SELECTION)
+ #  define _POSIX_CLOCK_SELECTION (-1)
+ #endif
+diff -ruN vlc-0.9.6.ori/src/misc/threads.c vlc-0.9.6/src/misc/threads.c
+--- vlc-0.9.6.ori/src/misc/threads.c	2008-11-29 15:00:20.000000000 +0100
++++ vlc-0.9.6/src/misc/threads.c	2008-11-29 15:01:06.000000000 +0100
+@@ -346,6 +346,7 @@
+     if (ret)
+         return ret;
+ 
++#undef _POSIX_CLOCK_SELECTION
+ # if !defined (_POSIX_CLOCK_SELECTION)
+    /* Fairly outdated POSIX support (that was defined in 2001) */
+ #  define _POSIX_CLOCK_SELECTION (-1)
