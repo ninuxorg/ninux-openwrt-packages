@@ -1,15 +1,19 @@
-# Claudyus 2010
+#
+# Copyright (C) 2010 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vlc
-PKG_VERSION:=0.9.6
+PKG_VERSION:=1.1.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=vlc-$(PKG_VERSION).tar.bz2
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://download.videolan.org/pub/videolan/vlc/$(PKG_VERSION)/$(PKG_SOURCE)
-PKG_MD5SUM:=246a3865ec037f8f5757ef6b973a80fc
-PKG_BUILD_DIR:=$(BUILD_DIR)/vlc-$(PKG_VERSION)
+PKG_MD5SUM:=e2142957137b183a5ad0a4827c39f655
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -114,6 +118,7 @@ define Build/Configure
 	 --disable-zvbi \
 	 --disable-atmo \
 	 --disable-mozilla \
+	 --disable-xcb \
 	 --enable-optimize-memory \
 	 --with-libiconv-prefix=$(STAGING_DIR)/usr/lib/libiconv \
 	 CFLAGS="$(CFLAGS) -std=gnu99" \
