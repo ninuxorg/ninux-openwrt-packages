@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 OpenWrt.org
+# Copyright (C) 2009-2010 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -28,9 +28,9 @@ include $(INCLUDE_DIR)/package.mk
 define Package/nowolfsplash
   SECTION:=net
   CATEGORY:=Network
-  SUBMENU:=CAPTIVE PORTAL
-  DEPENDS:=+at
+  DEPENDS:=+at +luac
   TITLE:=XMPP server
+  PKG_ARCH:=all
   URL:=http://nowolfsplash.im
 endef
 
