@@ -16,7 +16,9 @@ define Package/ninux-ng
   SECTION:=utils
   TITLE:=Ninux NG Firmware
   MAINTAINER:=contatt@ninux.org
-  DEPENDS:=+olsrd-ninux-all +iw +nowolfsplash +tind +kmod-ipv6
+  DEPENDS:=+olsrd-ninux-all +iw +nowolfsplash +tind +kmod-ipv6 \
+	+iptables-mod-hashlimit iptables-mod-conntrack +iperf +ip6tables-utils
+	+ip6tables 
   #this is a meta package suitable for any archs...
   PKG_ARCH:=all
 endef
