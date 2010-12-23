@@ -1,10 +1,10 @@
 # 
-# Copyright (C) 2008 OpenWrt.org
+# Copyright (C) 2008-2010 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
-# $Id: Makefile 13562 2008-12-09 10:32:28Z jow $
+# $Id $
 
 include $(TOPDIR)/rules.mk
 
@@ -25,7 +25,8 @@ TARGET_CFLAGS += $(FPIC)
 define Package/olsrd-ninux/template
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=OLSR daemon with Ninux Patches
+  TITLE:=OLSR daemon by Ninux
+  MAINTAINER:=contatti@ninux.org
   URL:=http://www.olsr.org/
 endef
 
@@ -97,6 +98,12 @@ define Package/olsrd-ninux-mod-mdns
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
+endef
+
+define Package/olsrd-ninux-mod-all
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=+olsrd-ninux +olsrd-ninux-mod-arprefresh +olsrd-ninux-mod-dot-draw +olsrd-ninux-mod-bmf +olsrd-ninux-mod-dyn-gw +olsrd-ninux-mod-dyn-gw-plain +olsrd-ninux-mod-httpinfo +olsrd-ninux-mod-nameservice +olsrd-ninux-mod-secure +olsrd-ninux-mod-txtinfo +olsrd-ninux-mod-mdns
+  TITLE+= (Meta package)
 endef
 
 define Package/olsrd-ninux-mod-secure/conffiles
@@ -196,3 +203,4 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
 $(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
 $(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
+$(eval $(call BuildPackage,olsrd-ninux-mod-all))
