@@ -1,5 +1,5 @@
 # 
-# Copyright (C) 2008-2010 OpenWrt.org
+# Copyright (C) 2008-2011 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,14 +9,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=olsrd-ninux
-PKG_VERSION:=0.5.6-r7
-PKG_RELEASE:=2
+PKG_VERSION:=0.6.2-pre
+PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/olsrd-ninux-$(PKG_VERSION)/
 PKG_SOURCE:=olsrd-ninux-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://olsr.org/olsrd.git
 PKG_SOURCE_VERSION:=origin/stable
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_BUILD_PARALLEL:=1
+PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,7 +27,8 @@ TARGET_CFLAGS += $(FPIC)
 define Package/olsrd-ninux/template
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=OLSR daemon by Ninux
+  SUBMENU:=Routing and Redirection
+  TITLE:=OLSR daemon packaged by Ninux
   MAINTAINER:=contatti@ninux.org
   URL:=http://www.olsr.org/
 endef
@@ -76,10 +79,28 @@ define Package/olsrd-ninux-mod-httpinfo
   TITLE:=Small informative web server plugin
 endef
 
+define Package/olsrd-ninux-mod-mdns
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
+endef
+
 define Package/olsrd-ninux-mod-nameservice
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
   TITLE:=Lightweight hostname resolver plugin
+endef
+
+define Package/olsrd-ninux-mod-p2pd
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=Peer to Peer Discovery plugin
+endef
+
+define Package/olsrd-ninux-mod-quagga
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=Quagga plugin
 endef
 
 define Package/olsrd-ninux-mod-secure
@@ -94,44 +115,34 @@ define Package/olsrd-ninux-mod-txtinfo
   TITLE:=Small informative web server plugin
 endef
 
-define Package/olsrd-ninux-mod-mdns
+define Package/olsrd-ninux-mod-watchdog
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
-  TITLE:=MDNS/Zeroconf/Bonjour packet distribution 
-endef
-
-define Package/olsrd-ninux-mod-all
-  $(call Package/olsrd-ninux/template)
-  DEPENDS:=+olsrd-ninux +olsrd-ninux-mod-arprefresh +olsrd-ninux-mod-dot-draw +olsrd-ninux-mod-bmf +olsrd-ninux-mod-dyn-gw +olsrd-ninux-mod-dyn-gw-plain +olsrd-ninux-mod-httpinfo +olsrd-ninux-mod-nameservice +olsrd-ninux-mod-secure +olsrd-ninux-mod-txtinfo +olsrd-ninux-mod-mdns
-  TITLE+= (Meta package)
+  TITLE:=Watchdog plugin
 endef
 
 define Package/olsrd-ninux-mod-secure/conffiles
 /etc/olsrd.d/olsrd_secure_key
 endef
 
-define Build/Configure
-endef
-
+MAKE_FLAGS+= \
+	NO_DEBUG_MESSAGES=1 \
+	OS="linux" \
+	DESTDIR="$(PKG_INSTALL_DIR)" \
+	STRIP="true" \
+	INSTALL_LIB="true" \
+	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo mdns nameservice p2pd quagga secure txtinfo watchdog"
 define Build/Compile
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
-	$(MAKE) -C "$(PKG_BUILD_DIR)" \
-		$(TARGET_CONFIGURE_OPTS) \
-		NODEBUG=1 \
-		CFLAGS="$(TARGET_CFLAGS)" \
-		OS="linux" \
-		INSTALL_PREFIX="$(PKG_INSTALL_DIR)" \
-		LIBDIR="$(PKG_INSTALL_DIR)/usr/lib" \
-		SBINDIR="$(PKG_INSTALL_DIR)/usr/sbin/" \
-		ETCDIR="$(PKG_INSTALL_DIR)/etc" \
-		MANDIR="$(PKG_INSTALL_DIR)/usr/share/man" \
-		STRIP="true" \
-		INSTALL_LIB="true" \
-		SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo nameservice secure txtinfo mdns" \
-		all libs install install_libs
+	$(call Build/Compile/Default,all)
+	$(call Build/Compile/Default,libs)
 endef
 
+define Build/Install
+	$(call Build/Install/Default,install)
+	$(call Build/Install/Default,install_libs)
+endef
 define Package/olsrd-ninux/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/olsrd.config $(1)/etc/config/olsrd
@@ -171,9 +182,24 @@ define Package/olsrd-ninux-mod-httpinfo/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/httpinfo/olsrd_httpinfo.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-mdns/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-nameservice/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/nameservice/olsrd_nameservice.so.* $(1)/usr/lib/
+endef
+
+define Package/olsrd-ninux-mod-p2pd/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/p2pd/olsrd_p2pd.so.* $(1)/usr/lib/
+endef
+
+define Package/olsrd-ninux-mod-quagga/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/quagga/olsrd_quagga.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-ninux-mod-secure/install
@@ -188,10 +214,11 @@ define Package/olsrd-ninux-mod-txtinfo/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/txtinfo/olsrd_txtinfo.so.* $(1)/usr/lib/
 endef
 
-define Package/olsrd-ninux-mod-mdns/install
+define Package/olsrd-ninux-mod-watchdog/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/watchdog/olsrd_watchdog.so.* $(1)/usr/lib/
 endef
+
 $(eval $(call BuildPackage,olsrd-ninux))
 $(eval $(call BuildPackage,olsrd-ninux-mod-arprefresh))
 $(eval $(call BuildPackage,olsrd-ninux-mod-dot-draw))
@@ -199,8 +226,9 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-bmf))
 $(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw))
 $(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw-plain))
 $(eval $(call BuildPackage,olsrd-ninux-mod-httpinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
 $(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
+$(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
+$(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
 $(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
-$(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
-$(eval $(call BuildPackage,olsrd-ninux-mod-all))
