@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://zioproto.ninux.org/download/ 
-PKG_MD5SUM:=3ba0d862b4d63ecf97f16176a486faed
+PKG_MD5SUM:=7748a729f79a0dcf60c49cc327628c95
 
 PKG_FIXUP:=libtool
 PKG_BUILD_PARALLEL:=1
@@ -49,7 +49,7 @@ define Build/Compile
 endef
 
 define Build/Install
-	mkdir -p $(PKG_INSTALL_DIR)/usr/{share{,/doc/$(PKG_NAME)-$(PKG_VERSION)},lib,include{,/nodogsplash},bin,sbin}/
+	mkdir -p $(PKG_INSTALL_DIR)/usr/{share{,/doc/nodogsplash-$(PKG_VERSION)},lib,include{,/nodogsplash},bin,sbin}/
 	$(call Build/Install/Default, \
 		mkinstalldirs="$(INSTALL_DIR)" \
 		install)
@@ -60,15 +60,15 @@ define Package/nodogsplashninux/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib/
-	$(INSTALL_DIR) $(1)/etc/$(PKG_NAME)
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/$(PKG_NAME).conf $(1)/etc/$(PKG_NAME)/
-	$(SED) 's,br0,br-lan,' $(1)/etc/$(PKG_NAME)/$(PKG_NAME).conf
-	$(CP) $(PKG_BUILD_DIR)/htdocs $(1)/etc/$(PKG_NAME)/
+	$(INSTALL_DIR) $(1)/etc/nodogsplash
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/nodogsplash.conf $(1)/etc/nodogsplash/
+	$(SED) 's,br0,br-lan,' $(1)/etc/nodogsplash/nodogsplash.conf
+	$(CP) $(PKG_BUILD_DIR)/htdocs $(1)/etc/nodogsplash/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
-	$(SED) 's,\(do_module_tests "imq"\),#\1,' $(1)/etc/init.d/$(PKG_NAME)
-	$(SED) 's,\(do_module_tests "ipt_IMQ"\),#\1,' $(1)/etc/init.d/$(PKG_NAME)
-	$(SED) 's,\(do_module_tests "sch_htb"\),#\1,' $(1)/etc/init.d/$(PKG_NAME)
+	$(INSTALL_BIN) ./files/nodogsplash.init $(1)/etc/init.d/nodogsplash
+	$(SED) 's,\(do_module_tests "imq"\),#\1,' $(1)/etc/init.d/nodogsplash
+	$(SED) 's,\(do_module_tests "ipt_IMQ"\),#\1,' $(1)/etc/init.d/nodogsplash
+	$(SED) 's,\(do_module_tests "sch_htb"\),#\1,' $(1)/etc/init.d/nodogsplash
 endef
 
 $(eval $(call BuildPackage,nodogsplashninux))
