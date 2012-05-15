@@ -1,0 +1,7 @@
+This github repo contains the ninux stable OpenWRT packages with custom fixes
+and improvement.
+
+To use this repo in your OpenWRT buildroot simple add this line to the feeds:
+
+src-git ninux git://github.com/ninuxorg/ninux-openwrt-packages.git
+
