@@ -28,7 +28,7 @@ define Package/nodogsplashninux
   CATEGORY:=Network
   DEPENDS:=+libpthread +iptables-mod-ipopt
   TITLE:=Ninux NoDogSplash
-  URL:=http://zioproto.ninux.org/download/
+  URL:=https://github.com/ninuxorg/nodogsplashninux
 endef
 
 define Package/nodogsplashninux/description
