@@ -5,3 +5,6 @@ To use this repo in your OpenWRT buildroot simple add this line to the feeds:
 
 src-git ninux git://github.com/ninuxorg/ninux-openwrt-packages.git
 
+Then use the follow commands to update/install packages from the new repo:
+openwrt$ ./scripts/feeds update -a
+openwrt$ ./scripts/feeds install -a -d y -p ninux
