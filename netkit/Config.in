@@ -1,6 +1,0 @@
-config NETKIT
-	prompt "Netkit Prompt"
-	tristate
-	default m if CONFIG_DEVEL
-	help
-		Per la documentazione visita http://wiki.ninux.org

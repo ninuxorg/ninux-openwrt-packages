@@ -1,3 +1,0 @@
-#!/bin/sh /etc/rc.common
-START=90
-#ip addr add 192.168.6.65/28 dev wl0

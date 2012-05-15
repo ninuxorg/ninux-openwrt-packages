@@ -1,4 +1,0 @@
-#!/bin/sh /etc/rc.common
-START=90
-ip addr add 192.168.6.65/28 dev ath0 
-ip addr add 192.168.6.81/28 dev ath1 

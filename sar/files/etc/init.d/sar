@@ -1,8 +1,0 @@
-#!/bin/sh /etc/rc.common
-# Copyright (C) 2009 Claudio Mignanti
-
-START=92
-
-start() {
-	
-}
