@@ -9,11 +9,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nodogsplashninux
 PKG_VERSION:=0.9_beta9.9.6
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://zioproto.ninux.org/download/ 
-PKG_MD5SUM:=7748a729f79a0dcf60c49cc327628c95
+PKG_SOURCE_URL:=git://github.com/ninuxorg/nodogsplashninux.git
+PKG_SOURCE_VERSION:=master
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_FIXUP:=libtool
 PKG_BUILD_PARALLEL:=1
@@ -27,7 +28,7 @@ define Package/nodogsplashninux
   CATEGORY:=Network
   DEPENDS:=+libpthread +iptables-mod-ipopt
   TITLE:=Ninux NoDogSplash
-  URL:=http://zioproto.ninux.org/download/
+  URL:=https://github.com/ninuxorg/nodogsplashninux
 endef
 
 define Package/nodogsplashninux/description
