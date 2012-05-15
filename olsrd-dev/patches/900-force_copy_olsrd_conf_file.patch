@@ -1,11 +1,13 @@
---- a/Makefile	2010-06-14 11:27:58.000000000 +0200
-+++ b/Makefile	2010-06-14 11:28:44.000000000 +0200
-@@ -117,7 +117,7 @@
- 		@echo can be found at files/olsrd.conf.default.lq
- 		@echo ==========================================================
- 		mkdir -p $(ETCDIR)
--		-cp -i files/olsrd.conf.default.lq $(CFGFILE)
-+		-cp -f files/olsrd.conf.default.lq $(CFGFILE)
- 		@echo -------------------------------------------
- 		@echo Edit $(CFGFILE) before running olsrd!!
- 		@echo -------------------------------------------
+diff --git a/Makefile b/Makefile
+index 221cb6d..29c3d59 100644
+--- a/Makefile
++++ b/Makefile
+@@ -112,7 +112,7 @@ install_olsrd:	install_bin
+ 		@echo 'can be found at files/olsrd.conf.default.lq'
+ 		@echo '=========================================================='
+ 		mkdir -p '$(ETCDIR)'
+-		-cp -i 'files/olsrd.conf.default.lq' '$(CFGFILE)'
++		-cp -f 'files/olsrd.conf.default.lq' '$(CFGFILE)'
+ 		@echo '-------------------------------------------'
+ 		@echo 'Edit $(CFGFILE) before running olsrd!!'
+ 		@echo '-------------------------------------------'
