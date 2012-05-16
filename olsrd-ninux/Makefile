@@ -121,6 +121,17 @@ define Package/olsrd-ninux-mod-watchdog
   TITLE:=Watchdog plugin
 endef
 
+define Package/olsrd-ninux-all
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=+olsrd-ninux +olsrd-ninux-mod-arprefresh +olsrd-ninux-mod-dot-draw \
+	+olsrd-ninux-mod-bmf +olsrd-ninux-mod-dyn-gw \
+	+olsrd-ninux-mod-dyn-gw-plain +olsrd-ninux-mod-httpinfo \
+	+olsrd-ninux-mod-mdns +olsrd-ninux-mod-nameservice \
+	+olsrd-ninux-mod-p2pd +olsrd-ninux-mod-quagga \
+	+olsrd-ninux-mod-secure +olsrd-ninux-mod-txtinfo
+  TITLE:=All plugins meta package
+endef
+
 define Package/olsrd-ninux-mod-secure/conffiles
 /etc/olsrd.d/olsrd_secure_key
 endef
@@ -232,3 +243,4 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
 $(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
 $(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-all))
