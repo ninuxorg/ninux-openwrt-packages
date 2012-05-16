@@ -124,11 +124,11 @@ endef
 define Package/olsrd-ninux-all
   $(call Package/olsrd-ninux/template)
   DEPENDS:=+olsrd-ninux +olsrd-ninux-mod-arprefresh +olsrd-ninux-mod-dot-draw \
-	+olsrd-ninux-mod-bmf +olsrd-ninux-mod-dyn-gw \
+	+olsrd-ninux-mod-dyn-gw \
 	+olsrd-ninux-mod-dyn-gw-plain +olsrd-ninux-mod-httpinfo \
 	+olsrd-ninux-mod-mdns +olsrd-ninux-mod-nameservice \
 	+olsrd-ninux-mod-p2pd +olsrd-ninux-mod-quagga \
-	+olsrd-ninux-mod-secure +olsrd-ninux-mod-txtinfo
+	+olsrd-ninux-mod-txtinfo
   TITLE:=All plugins meta package
 endef
 
