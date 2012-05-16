@@ -18,7 +18,7 @@ define Package/ninux-ng
   MAINTAINER:=contatti@ninux.org
   #selected by default when installed inside OpenWrt..
   DEFAULT=y
-  DEPENDS:=+olsrd-ninux-all +iw +tincd +kmod-ipv6 +tc +ip +kmod-ip6tables \
+  DEPENDS:=+olsrd-ninux-all +iw +tinc +kmod-ipv6 +tc +ip +kmod-ip6tables \
 	+iptables-mod-hashlimit +iptables-mod-conntrack +iperf +ip6tables-utils \
 	+ip6tables +nodogsplashninux +ip +iptraf +iwinfo +tcpdump +radvd
   #this is a meta package suitable for any archs...
