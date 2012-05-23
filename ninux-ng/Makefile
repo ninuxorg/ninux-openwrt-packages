@@ -34,7 +34,7 @@ endef
 
 define Package/ninux-ng/install
 	$(INSTALL_DIR) $(1)/
-	$(CP) -r ./files/* $(1)/
+#	$(CP) -r ./files/* $(1)/
 endef
 
 $(eval $(call BuildPackage,ninux-ng))
