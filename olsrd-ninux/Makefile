@@ -103,6 +103,19 @@ define Package/olsrd-ninux-mod-p2pd
   TITLE:=Peer to Peer Discovery plugin
 endef
 
+
+define Package/olsrd-ninux-mod-pgraph
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=TODO: Fixme
+endef
+
+define Package/olsrd-ninux-mod-pud
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=TODO: Fixme
+endef
+
 define Package/olsrd-ninux-mod-quagga
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
@@ -149,7 +162,7 @@ MAKE_FLAGS+= \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
 	INSTALL_LIB="true" \
-	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd quagga secure sgwdynspeed tas txtinfo watchdog"
+	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd pgraph pud quagga secure sgwdynspeed tas txtinfo watchdog"
 define Build/Compile
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
@@ -220,6 +233,16 @@ define Package/olsrd-ninux-mod-p2pd/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/p2pd/olsrd_p2pd.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-pgraph/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pgraph/olsrd_p2pd.so.* $(1)/usr/lib/
+endef
+
+define Package/olsrd-ninux-mod-pud/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pud/olsrd_p2pd.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-quagga/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/quagga/olsrd_quagga.so.* $(1)/usr/lib/
@@ -263,6 +286,8 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-jsoninfo))
 $(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
 $(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
 $(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
+$(eval $(call BuildPackage,olsrd-ninux-mod-pgraph))
+$(eval $(call BuildPackage,olsrd-ninux-mod-pud))
 $(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
 $(eval $(call BuildPackage,olsrd-ninux-mod-sgwdynspeed))
