@@ -79,6 +79,12 @@ define Package/olsrd-ninux-mod-httpinfo
   TITLE:=Small informative web server plugin
 endef
 
+define Package/olsrd-ninux-mod-jsoninfo
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=FIXME
+endef
+
 define Package/olsrd-ninux-mod-mdns
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
@@ -109,6 +115,18 @@ define Package/olsrd-ninux-mod-secure
   TITLE:=Message signing plugin to secure routing domain
 endef
 
+define Package/olsrd-ninux-mod-sgwdynspeed
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=FIXME
+endef
+
+define Package/olsrd-ninux-mod-tas
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=FIXME
+endef
+
 define Package/olsrd-ninux-mod-txtinfo
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
@@ -131,7 +149,7 @@ MAKE_FLAGS+= \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
 	INSTALL_LIB="true" \
-	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo mdns nameservice p2pd quagga secure txtinfo watchdog"
+	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd quagga secure sgwdynspeed tas txtinfo watchdog"
 define Build/Compile
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
@@ -182,6 +200,11 @@ define Package/olsrd-ninux-mod-httpinfo/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/httpinfo/olsrd_httpinfo.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-jsoninfo/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/jsoninfo/olsrd_jsoninfo.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-mdns/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/mdns/olsrd_mdns.so.* $(1)/usr/lib/
@@ -209,6 +232,16 @@ define Package/olsrd-ninux-mod-secure/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/secure/olsrd_secure.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-sgwdynspeed/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/sgwdynspeed/olsrd_sgwdynspeed.so.* $(1)/usr/lib/
+endef
+
+define Package/olsrd-ninux-mod-tas/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/tas/olsrd_tas.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-txtinfo/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/txtinfo/olsrd_txtinfo.so.* $(1)/usr/lib/
@@ -226,9 +259,13 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-bmf))
 $(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw))
 $(eval $(call BuildPackage,olsrd-ninux-mod-dyn-gw-plain))
 $(eval $(call BuildPackage,olsrd-ninux-mod-httpinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-jsoninfo))
 $(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
 $(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
 $(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
 $(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
+$(eval $(call BuildPackage,olsrd-ninux-mod-sgwdynspeed))
+$(eval $(call BuildPackage,olsrd-ninux-mod-tas))
 $(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
+$(eval $(call BuildPackage,olsrd-ninux-mod-watchdog))
