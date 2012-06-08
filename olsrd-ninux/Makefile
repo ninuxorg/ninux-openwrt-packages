@@ -122,6 +122,12 @@ define Package/olsrd-ninux-mod-secure
   TITLE:=Message signing plugin to secure routing domain
 endef
 
+define Package/olsrd-ninux-mod-sgwdynspeed
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=Smart Gateway dynamic speed plugin
+endef
+
 define Package/olsrd-ninux-mod-tas
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
@@ -144,13 +150,17 @@ define Package/olsrd-ninux-mod-secure/conffiles
 /etc/olsrd.d/olsrd_secure_key
 endef
 
+define Package/olsrd-ninux-mod-sgwdynspeed/conffiles
+/etc/olsrd.d/olsrd.sgw.speed.conf
+endef
+
 MAKE_FLAGS+= \
 	NO_DEBUG_MESSAGES=1 \
 	OS="linux" \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
 	INSTALL_LIB="true" \
-	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd pgraph quagga secure tas txtinfo watchdog"
+	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd pgraph quagga secure sgwdynspeed tas txtinfo watchdog"
 define Build/Compile
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
@@ -238,6 +248,13 @@ define Package/olsrd-ninux-mod-secure/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/secure/olsrd_secure.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-sgwdynspeed/install
+	$(INSTALL_DIR) $(1)/etc/olsrd.d
+	$(CP) ./files/olsrd.sgw.speed.conf $(1)/etc/olsrd.d/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/sgwdynspeed/olsrd_sgwdynspeed.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-tas/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/tas/olsrd_tas.so.* $(1)/usr/lib/
@@ -267,6 +284,7 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
 $(eval $(call BuildPackage,olsrd-ninux-mod-pgraph))
 $(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
+$(eval $(call BuildPackage,olsrd-ninux-mod-sgwdynspeed))
 $(eval $(call BuildPackage,olsrd-ninux-mod-tas))
 $(eval $(call BuildPackage,olsrd-ninux-mod-txtinfo))
 $(eval $(call BuildPackage,olsrd-ninux-mod-watchdog))
