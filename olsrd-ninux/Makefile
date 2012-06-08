@@ -9,7 +9,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=olsrd-ninux
-PKG_VERSION:=0.6.2-pre
+PKG_VERSION:=0.6.4-pre
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/olsrd-ninux-$(PKG_VERSION)/
