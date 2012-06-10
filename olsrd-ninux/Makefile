@@ -223,7 +223,7 @@ endef
 
 define Package/olsrd-ninux-mod-pgraph/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pgraph/olsrd_p2pd.so.* $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pgraph/olsrd_pgraph.so.* $(1)/usr/lib/
 endef
 
 define Package/olsrd-ninux-mod-quagga/install
