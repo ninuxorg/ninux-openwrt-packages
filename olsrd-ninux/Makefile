@@ -110,6 +110,12 @@ define Package/olsrd-ninux-mod-pgraph
   TITLE:=TODO: Fixme
 endef
 
+define Package/olsrd-ninux-mod-pud
+  $(call Package/olsrd-ninux/template)
+  DEPENDS:=olsrd-ninux
+  TITLE:=Position Update Distribution plugin
+endef
+
 define Package/olsrd-ninux-mod-quagga
   $(call Package/olsrd-ninux/template)
   DEPENDS:=olsrd-ninux
@@ -146,6 +152,10 @@ define Package/olsrd-ninux-mod-watchdog
   TITLE:=Watchdog plugin
 endef
 
+define Package/olsrd-ninux-mod-pud/conffiles
+/etc/olsrd.d/olsrd.pud.position.conf
+endef
+
 define Package/olsrd-ninux-mod-secure/conffiles
 /etc/olsrd.d/olsrd_secure_key
 endef
@@ -160,7 +170,7 @@ MAKE_FLAGS+= \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
 	INSTALL_LIB="true" \
-	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd pgraph quagga secure sgwdynspeed tas txtinfo watchdog"
+	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo jsoninfo mdns nameservice p2pd pgraph pud quagga secure sgwdynspeed tas txtinfo watchdog"
 define Build/Compile
 	rm -rf $(PKG_INSTALL_DIR)
 	mkdir -p $(PKG_INSTALL_DIR)
@@ -236,6 +246,15 @@ define Package/olsrd-ninux-mod-pgraph/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pgraph/olsrd_pgraph.so.* $(1)/usr/lib/
 endef
 
+define Package/olsrd-ninux-mod-pud/install
+	$(INSTALL_DIR) $(1)/etc/olsrd.d
+	$(CP) ./files/olsrd.pud.position.conf $(1)/etc/olsrd.d/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pud/nmealib/lib/libnmea.so $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pud/wireformat/lib/libOlsrdPudWireFormat.so $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/pud/olsrd_pud.so.* $(1)/usr/lib/
+endef
+
 define Package/olsrd-ninux-mod-quagga/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/quagga/olsrd_quagga.so.* $(1)/usr/lib/
@@ -282,6 +301,7 @@ $(eval $(call BuildPackage,olsrd-ninux-mod-mdns))
 $(eval $(call BuildPackage,olsrd-ninux-mod-nameservice))
 $(eval $(call BuildPackage,olsrd-ninux-mod-p2pd))
 $(eval $(call BuildPackage,olsrd-ninux-mod-pgraph))
+$(eval $(call BuildPackage,olsrd-ninux-mod-pud))
 $(eval $(call BuildPackage,olsrd-ninux-mod-quagga))
 $(eval $(call BuildPackage,olsrd-ninux-mod-secure))
 $(eval $(call BuildPackage,olsrd-ninux-mod-sgwdynspeed))
