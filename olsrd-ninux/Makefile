@@ -165,7 +165,7 @@ define Package/olsrd-ninux-mod-sgwdynspeed/conffiles
 endef
 
 MAKE_FLAGS+= \
-	NO_DEBUG_MESSAGES=1 \
+	NO_DEBUG_MESSAGES=0 \
 	OS="linux" \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
