@@ -14,8 +14,8 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/olsrd-ninux-$(PKG_VERSION)/
 PKG_SOURCE:=olsrd-ninux-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=git://github.com/zioproto/olsrd-gsoc2012.git
-PKG_SOURCE_VERSION:=origin/mDNS-plugin-GSOC
+PKG_SOURCE_URL:=git://olsr.org/olsrd.git
+PKG_SOURCE_VERSION:=origin/mDNS-plugin-GSoC-2012
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
