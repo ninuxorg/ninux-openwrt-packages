@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/netkit
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+kmod-ipv6 +kmod-fs-ext3 @TARGET_uml
+  DEPENDS:=+kmod-ipv6 +kmod-fs-ext4 @TARGET_uml
   TITLE:=Netkit Package
 endef
 
