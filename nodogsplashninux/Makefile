@@ -16,7 +16,7 @@ PKG_SOURCE_URL:=git://github.com/ninuxorg/nodogsplashninux.git
 PKG_SOURCE_VERSION:=master
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
-PKG_FIXUP:=libtool
+PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
@@ -70,6 +70,10 @@ define Package/nodogsplashninux/install
 	$(SED) 's,\(do_module_tests "imq"\),#\1,' $(1)/etc/init.d/nodogsplash
 	$(SED) 's,\(do_module_tests "ipt_IMQ"\),#\1,' $(1)/etc/init.d/nodogsplash
 	$(SED) 's,\(do_module_tests "sch_htb"\),#\1,' $(1)/etc/init.d/nodogsplash
+endef
+
+define Package/nodogsplash/conffiles
+/etc/nodogsplash/nodogsplash.conf
 endef
 
 $(eval $(call BuildPackage,nodogsplashninux))
