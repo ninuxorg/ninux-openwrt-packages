@@ -1,7 +1,7 @@
 /*
  * reghack - Utility to binary-patch the embedded mac80211 regulatory rules.
  *
- *   Copyright (C) 2012 Jo-Philipp Wich <xm@subsignal.org>
+ *   Copyright (C) 2012-2013 Jo-Philipp Wich <xm@subsignal.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <byteswap.h>
+#include <arpa/inet.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+
+
+static int need_byteswap = 0;
 
 struct ieee80211_freq_range {
     uint32_t start_freq_khz;
@@ -144,17 +149,101 @@ static const struct search_regdomain search_regdomains[] = {
 };
 
 
+static void check_endianess(unsigned char *elf_hdr)
+{
+	int self_is_be = (htonl(42) == 42);
+	int elf_is_be  = (elf_hdr[5] == 2);
+
+	if (self_is_be != elf_is_be)
+	{
+		need_byteswap = 1;
+		printf("Byte swapping needed (utility %s endian, module %s endian)\n",
+			   self_is_be ? "big" : "low",
+			   elf_is_be  ? "big" : "low");
+	}
+}
+
+static void bswap_rule(struct ieee80211_reg_rule *r)
+{
+	r->freq_range.start_freq_khz    = bswap_32(r->freq_range.start_freq_khz);
+	r->freq_range.end_freq_khz      = bswap_32(r->freq_range.end_freq_khz);
+	r->freq_range.max_bandwidth_khz = bswap_32(r->freq_range.max_bandwidth_khz);
+
+	r->power_rule.max_antenna_gain  = bswap_32(r->power_rule.max_antenna_gain);
+	r->power_rule.max_eirp          = bswap_32(r->power_rule.max_eirp);
+
+	r->flags                        = bswap_32(r->flags);
+}
+
+static int compare_regdomain(const struct ieee80211_regdomain *find,
+							 const struct ieee80211_regdomain *comp)
+{
+	struct ieee80211_regdomain pattern = *find;
+
+	if (need_byteswap)
+	{
+		bswap_rule(&pattern.reg_rules[0]);
+		pattern.n_reg_rules = bswap_32(pattern.n_reg_rules);
+	}
+
+	return memcmp(&pattern, comp, sizeof(pattern));
+}
+
+static void assign_regdomain(struct ieee80211_regdomain *r)
+{
+	struct ieee80211_reg_rule r2 = REG_RULE(2400, 2483, 40, 0, 30, 0);
+	struct ieee80211_reg_rule r5 = REG_RULE(5140, 5860, 40, 0, 30, 0);
+
+	r->reg_rules[0] = r2;
+	r->reg_rules[1] = r5;
+	r->n_reg_rules = 2;
+
+	if (need_byteswap)
+	{
+		bswap_rule(&r->reg_rules[0]);
+		bswap_rule(&r->reg_rules[1]);
+		r->n_reg_rules = bswap_32(r->n_reg_rules);
+	}
+}
+
+
+static int check_ath_ko(unsigned char *elf_hdr, const char *filename)
+{
+	const char *file = strrchr(filename, '/');
+
+	if (!file)
+		file = filename;
+	else
+		file++;
+
+	/* check for a big endian mips elf, since we patch the insn directly */
+	return (!strcmp(file, "ath.ko") &&
+	        elf_hdr[5] == 0x02 && elf_hdr[18] == 0x00 && elf_hdr[19] == 0x08);
+}
+
+static int patch_radarfreq(uint8_t *insn)
+{
+	const uint8_t match_insn[]   = { 0x2c, 0xa5, 0x01, 0xb9 }; /* sltiu $5, $5, 441 */
+	const uint8_t replace_insn[] = { 0x3c, 0x05, 0x00, 0x00 }; /* lui $5, 0	*/
+
+	if (!memcmp(insn, &match_insn, sizeof(match_insn)))
+	{
+		memcpy(insn, &replace_insn, sizeof(replace_insn));
+		return 0;
+	}
+
+	return 1;
+}
+
+
 int main(int argc, char **argv)
 {
 	int i, j, fd;
 	int found = 0;
+	int is_ath_ko = 0;
 
 	void *map;
 	struct stat s;
-
-	struct ieee80211_regdomain *r;
-	struct ieee80211_reg_rule r2 = REG_RULE(2000, 3000, 40, 0, 30, 0);
-	struct ieee80211_reg_rule r5 = REG_RULE(4000, 7000, 40, 0, 30, 0);
 
 	if (argc < 2)
 	{
@@ -182,19 +271,23 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	check_endianess(map);
+	is_ath_ko = check_ath_ko(map, argv[1]);
+
 	for (i = 0; i < (s.st_size - sizeof(search_regdomains[0].reg)); i += sizeof(uint32_t))
 	{
+		if (is_ath_ko && !patch_radarfreq(map + i))
+		{
+			printf("Patching @ 0x%08x: radar frequency check\n", i);
+			found = 1;
+		}
+
 		for (j = 0; j < (sizeof(search_regdomains)/sizeof(search_regdomains[0])); j++)
 		{
-			if (!memcmp(map + i, &search_regdomains[j].reg, sizeof(search_regdomains[j].reg)))
+			if (!compare_regdomain(map + i, &search_regdomains[j].reg))
 			{
 				printf("Patching @ 0x%08x: %s\n", i, search_regdomains[j].desc);
-
-				r = map + i;
-				r->reg_rules[0] = r2;
-				r->reg_rules[1] = r5;
-				r->n_reg_rules = 2;
-
+				assign_regdomain(map + i);
 				found = 1;
 			}
 		}
