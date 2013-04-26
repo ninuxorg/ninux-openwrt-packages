@@ -72,7 +72,7 @@ define Package/nodogsplashninux/install
 	$(SED) 's,\(do_module_tests "sch_htb"\),#\1,' $(1)/etc/init.d/nodogsplash
 endef
 
-define Package/nodogsplash/conffiles
+define Package/nodogsplashninux/conffiles
 /etc/nodogsplash/nodogsplash.conf
 endef
 
