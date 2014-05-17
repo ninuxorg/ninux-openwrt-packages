@@ -1,7 +1,7 @@
 /*
  * reghack - Utility to binary-patch the embedded mac80211 regulatory rules.
  *
- *   Copyright (C) 2012-2013 Jo-Philipp Wich <xm@subsignal.org>
+ *   Copyright (C) 2012-2014 Jo-Philipp Wich <xm@subsignal.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,12 +23,18 @@
 #include <fcntl.h>
 #include <string.h>
 #include <byteswap.h>
+#include <limits.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 
 
 static int need_byteswap = 0;
+
+enum nl80211_dfs_regions {
+	NL80211_DFS_UNSET = 0,
+	NL80211_DFS_FCC = 1
+};
 
 struct ieee80211_freq_range {
     uint32_t start_freq_khz;
@@ -47,10 +53,17 @@ struct ieee80211_reg_rule {
     uint32_t flags;
 };
 
-struct ieee80211_regdomain {
+struct ieee80211_regdomain_old {
     uint32_t n_reg_rules;
     char alpha2[2];
     uint8_t dfs_region;
+    struct ieee80211_reg_rule reg_rules[1];
+};
+
+struct ieee80211_regdomain {
+    uint32_t n_reg_rules;
+    char alpha2[2];
+    enum nl80211_dfs_regions dfs_region;
     struct ieee80211_reg_rule reg_rules[1];
 };
 
@@ -71,81 +84,95 @@ struct ieee80211_regdomain {
     .flags = reg_flags,             \
 }
 
+#define REG_MATCH(code, num, dfs, rule) \
+{ \
+	.alpha2 = code, \
+	.dfs_region = dfs, \
+	.n_reg_rules = num, \
+	.reg_rules = { \
+		rule \
+	} \
+}
+
 
 struct search_regdomain {
 	const char *desc;
 	struct ieee80211_regdomain reg;
+	struct ieee80211_regdomain_old old;
 };
 
 static const struct search_regdomain search_regdomains[] = {
 	/* cfg80211.ko matches */
 	{
 		.desc = "core world5 regdomain in cfg80211/reg.o",
-		.reg  = {
-			.alpha2 = "00",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 6, 20, 0)
-			},
-			.n_reg_rules = 5
-		}
+		.reg  = REG_MATCH("00", 5, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 6, 20, 0))
 	}, {
 		.desc = "core world6 regdomain in cfg80211/reg.o",
-		.reg  = {
-			.alpha2 = "00",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 6, 20, 0)
-			},
-			.n_reg_rules = 6
-		}
+		.reg  = REG_MATCH("00", 6, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 6, 20, 0))
 	}, {
 		.desc = "embedded 00 regdomain in cfg80211/regdb.o",
-		.reg  = {
-			.alpha2 = "00",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 3, 20, 0)
-			},
-			.n_reg_rules = 5
-		}
+		.reg  = REG_MATCH("00", 5, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 3, 20, 0))
+	}, {
+		.desc = "embedded 00 regdomain in cfg80211/regdb.o",
+		.reg  = REG_MATCH("00", 6, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 3, 20, 0))
 	}, {
 		.desc = "embedded US regdomain in cfg80211/regdb.o",
-		.reg  = {
-			.alpha2 = "US",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 3, 27, 0)
-			},
-			.n_reg_rules = 6
-		}
+		.reg  = REG_MATCH("US", 6, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 3, 27, 0))
+	}, {
+		.desc = "embedded US regdomain in cfg80211/regdb.o",
+		.reg  = REG_MATCH("US", 7, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 3, 27, 0))
+	}, {
+		.desc = "embedded US regdomain in cfg80211/regdb.o",
+		.reg  = REG_MATCH("US", 7, NL80211_DFS_FCC, REG_RULE(2402, 2472, 40, 3, 27, 0))
+	},
+
+	/* regdb.txt matches (new) */
+	{
+		.desc = "embedded 00 regdomain in cfg80211/regdb.o",
+		.reg  = REG_MATCH("00", 6, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 0, 20, 0))
+	}, {
+		.desc = "embedded US regdomain in cfg80211/regdb.o",
+		.reg  = REG_MATCH("US", 5, NL80211_DFS_FCC, REG_RULE(2402, 2472, 40, 0, 30, 0))
 	},
 
 	/* ath.ko matches */
 	{
 		.desc = "ath world regdomain with 3 rules in ath/regd.o",
-		.reg  = {
-			.alpha2 = "99",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 0, 20, 0)
-			},
-			.n_reg_rules = 3
-		}
+		.reg  = REG_MATCH("99", 3, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 0, 20, 0))
 	}, {
 		.desc = "ath world regdomain with 4 rules in ath/regd.o",
-		.reg  = {
-			.alpha2 = "99",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 0, 20, 0)
-			},
-			.n_reg_rules = 4
-		}
+		.reg  = REG_MATCH("99", 4, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 0, 20, 0))
 	}, {
 		.desc = "ath world regdomain with 5 rules in ath/regd.o",
-		.reg  = {
-			.alpha2 = "99",
-			.reg_rules = {
-				REG_RULE(2402, 2472, 40, 0, 20, 0)
-			},
-			.n_reg_rules = 5
-		}
+		.reg  = REG_MATCH("99", 5, NL80211_DFS_UNSET, REG_RULE(2402, 2472, 40, 0, 20, 0))
 	}
+};
+
+
+struct search_insn {
+	const char *desc;
+	const uint16_t machine;
+	const uint32_t search;
+	const uint32_t replace;
+	const uint32_t mask;
+};
+
+static const struct search_insn search_insns[] = {
+	/* radar frequency check */
+	{
+		.desc    = "ath_is_radar_freq() MIPS opcode in ath/regd.o",
+		.machine = 0x0008,     /* MIPS */
+		.search  = 0x2400eb74, /* addiu rX, rY, -5260 */
+		.replace = 0x24000000, /* addiu rX, rY, 0	*/
+		.mask    = 0xfc00ffff
+	},
+	{
+		.desc    = "ath_is_radar_freq() PPC opcode in ath/regd.o",
+		.machine = 0x0014,     /* PPC */
+		.search  = 0x3800eb74, /* addi rX, rY, -5260 */
+		.replace = 0x38000000, /* addi rX, rY, 0 */
+		.mask    = 0xfc00ffff
+	},
 };
 
 
@@ -175,60 +202,57 @@ static void bswap_rule(struct ieee80211_reg_rule *r)
 	r->flags                        = bswap_32(r->flags);
 }
 
-static int compare_regdomain(const struct ieee80211_regdomain *find,
-							 const struct ieee80211_regdomain *comp)
+static int patch_regdomain(struct ieee80211_regdomain *pos,
+                           const struct ieee80211_regdomain *comp)
 {
-	struct ieee80211_regdomain pattern = *find;
+	struct ieee80211_reg_rule r2 = REG_RULE(2400, 2483, 40, 0, 30, 0);
+	struct ieee80211_reg_rule r5 = REG_RULE(5140, 5860, 40, 0, 30, 0);
+	struct ieee80211_regdomain pattern = *comp;
+	struct ieee80211_regdomain_old *pos2 = (struct ieee80211_regdomain_old *)pos;
+	struct ieee80211_regdomain_old pattern2 = { };
 
 	if (need_byteswap)
 	{
 		bswap_rule(&pattern.reg_rules[0]);
+		pattern.dfs_region = bswap_32(pattern.dfs_region);
 		pattern.n_reg_rules = bswap_32(pattern.n_reg_rules);
 	}
 
-	return memcmp(&pattern, comp, sizeof(pattern));
-}
+	pattern2.dfs_region = pattern.dfs_region;
+	pattern2.n_reg_rules = pattern.n_reg_rules;
+	memcpy(&pattern2.alpha2, &pattern.alpha2, sizeof(pattern2.alpha2));
+	memcpy(&pattern2.reg_rules, &pattern.reg_rules, sizeof(pattern2.reg_rules));
 
-static void assign_regdomain(struct ieee80211_regdomain *r)
-{
-	struct ieee80211_reg_rule r2 = REG_RULE(2400, 2483, 40, 0, 30, 0);
-	struct ieee80211_reg_rule r5 = REG_RULE(5140, 5860, 40, 0, 30, 0);
-
-	r->reg_rules[0] = r2;
-	r->reg_rules[1] = r5;
-	r->n_reg_rules = 2;
-
-	if (need_byteswap)
+	if (!memcmp(pos, &pattern, sizeof(pattern)))
 	{
-		bswap_rule(&r->reg_rules[0]);
-		bswap_rule(&r->reg_rules[1]);
-		r->n_reg_rules = bswap_32(r->n_reg_rules);
+		pos->reg_rules[0] = r2;
+		pos->reg_rules[1] = r5;
+		pos->n_reg_rules = 2;
+		pos->dfs_region = 0;
+
+		if (need_byteswap)
+		{
+			bswap_rule(&pos->reg_rules[0]);
+			bswap_rule(&pos->reg_rules[1]);
+			pos->n_reg_rules = bswap_32(pos->n_reg_rules);
+		}
+
+		return 0;
 	}
-}
-
-
-static int check_ath_ko(unsigned char *elf_hdr, const char *filename)
-{
-	const char *file = strrchr(filename, '/');
-
-	if (!file)
-		file = filename;
-	else
-		file++;
-
-	/* check for a big endian mips elf, since we patch the insn directly */
-	return (!strcmp(file, "ath.ko") &&
-	        elf_hdr[5] == 0x02 && elf_hdr[18] == 0x00 && elf_hdr[19] == 0x08);
-}
-
-static int patch_radarfreq(uint8_t *insn)
-{
-	const uint8_t match_insn[]   = { 0x2c, 0xa5, 0x01, 0xb9 }; /* sltiu $5, $5, 441 */
-	const uint8_t replace_insn[] = { 0x3c, 0x05, 0x00, 0x00 }; /* lui $5, 0	*/
-
-	if (!memcmp(insn, &match_insn, sizeof(match_insn)))
+	else if (!memcmp(pos2, &pattern2, sizeof(pattern2)))
 	{
-		memcpy(insn, &replace_insn, sizeof(replace_insn));
+		pos2->reg_rules[0] = r2;
+		pos2->reg_rules[1] = r5;
+		pos2->n_reg_rules = 2;
+		pos2->dfs_region = 0;
+
+		if (need_byteswap)
+		{
+			bswap_rule(&pos2->reg_rules[0]);
+			bswap_rule(&pos2->reg_rules[1]);
+			pos2->n_reg_rules = bswap_32(pos2->n_reg_rules);
+		}
+
 		return 0;
 	}
 
@@ -236,14 +260,79 @@ static int patch_radarfreq(uint8_t *insn)
 }
 
 
+static uint16_t check_ath_ko(unsigned char *elf_hdr, const char *filename)
+{
+	uint16_t type = *(uint16_t *)(elf_hdr + 18);
+	const char *file = strrchr(filename, '/');
+
+	if (!file)
+		file = filename;
+	else
+		file++;
+
+	if (need_byteswap)
+		type = bswap_16(type);
+
+	if (!strcmp(file, "ath.ko"))
+		return type;
+
+	return 0;
+}
+
+static int patch_insn(uint32_t *pos, const struct search_insn *insn)
+{
+	uint32_t cmp = need_byteswap ? bswap_32(*pos) : *pos;
+
+	if ((cmp & insn->mask) == insn->search)
+	{
+		*pos = need_byteswap ? bswap_32(insn->replace | (cmp & ~insn->mask))
+		                     : insn->replace | (cmp & ~insn->mask);
+
+		return 0;
+	}
+
+	return 1;
+}
+
+
+static int tryopen(const char *path, int *size, void **map)
+{
+	int fd;
+	struct stat s;
+
+	if (stat(path, &s))
+	{
+		perror("stat()");
+		return -1;
+	}
+
+	if ((fd = open(path, O_RDWR)) == -1)
+	{
+		perror("open()");
+		return -2;
+	}
+
+	*size = s.st_size;
+	*map = mmap(NULL, *size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+	if (*map == MAP_FAILED)
+	{
+		close(fd);
+		perror("mmap()");
+		return -3;
+	}
+
+	return fd;
+}
+
 int main(int argc, char **argv)
 {
-	int i, j, fd;
+	int i, j, fd, sz;
 	int found = 0;
-	int is_ath_ko = 0;
+	uint16_t ath_ko_machine = 0;
 
 	void *map;
-	struct stat s;
+	char *tmp = NULL, cmd[PATH_MAX * 2 + 4];
 
 	if (argc < 2)
 	{
@@ -251,52 +340,73 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	if (stat(argv[1], &s))
+	fd = tryopen(argv[1], &sz, &map);
+
+	if (fd == -3)
 	{
-		perror("stat()");
-		exit(1);
+		printf("Memory mapping failed (missing fs support?), retrying from tmpfs\n");
+
+		tmp = tmpnam(NULL);
+
+		sprintf(cmd, "cp %s %s", argv[1], tmp);
+		system(cmd);
+
+		fd = tryopen(tmp, &sz, &map);
 	}
 
-	if ((fd = open(argv[1], O_RDWR)) == -1)
+	if (fd < 0)
 	{
-		perror("open()");
-		exit(1);
-	}
+		if (tmp)
+			unlink(tmp);
 
-	map = mmap(NULL, s.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-
-	if (map == MAP_FAILED)
-	{
-		perror("mmap()");
 		exit(1);
 	}
 
 	check_endianess(map);
-	is_ath_ko = check_ath_ko(map, argv[1]);
+	ath_ko_machine = check_ath_ko(map, argv[1]);
 
-	for (i = 0; i < (s.st_size - sizeof(search_regdomains[0].reg)); i += sizeof(uint32_t))
+	for (i = 0; i < (sz - sizeof(search_regdomains[0].reg)); i += sizeof(uint32_t))
 	{
-		if (is_ath_ko && !patch_radarfreq(map + i))
+		if (ath_ko_machine)
 		{
-			printf("Patching @ 0x%08x: radar frequency check\n", i);
-			found = 1;
+			for (j = 0; j < sizeof(search_insns)/sizeof(search_insns[0]); j++)
+			{
+				if (search_insns[j].machine != ath_ko_machine)
+					continue;
+
+				if (!patch_insn(map + i, &search_insns[j]))
+				{
+					printf("Patching @ 0x%08x: %s\n", i, search_insns[j].desc);
+					found = 1;
+				}
+			}
 		}
 
 		for (j = 0; j < (sizeof(search_regdomains)/sizeof(search_regdomains[0])); j++)
 		{
-			if (!compare_regdomain(map + i, &search_regdomains[j].reg))
+			if (!patch_regdomain(map + i, &search_regdomains[j].reg))
 			{
 				printf("Patching @ 0x%08x: %s\n", i, search_regdomains[j].desc);
-				assign_regdomain(map + i);
 				found = 1;
 			}
 		}
 	}
 
-	if (munmap(map, s.st_size))
+	if (munmap(map, sz))
 	{
 		perror("munmap()");
 		exit(1);
+	}
+
+	if (tmp)
+	{
+		if (found)
+		{
+			sprintf(cmd, "cp %s %s", tmp, argv[1]);
+			system(cmd);
+		}
+
+		unlink(tmp);
 	}
 
 	close(fd);
